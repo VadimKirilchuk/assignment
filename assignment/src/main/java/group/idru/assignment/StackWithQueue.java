@@ -23,9 +23,10 @@ public class StackWithQueue {
 
 /**
  * Stack implementation based on two queues.
- * This class provides methods for working with.
+ * This class provides methods for working with stack.
  * This implementation is alternative version of StackWithQueueAlternativ,
  * it makes some copy job while pop is necessary, but pushing is simple.
+ *
  * @param <E>
  */
 class MainStack<E> {
@@ -42,7 +43,6 @@ class MainStack<E> {
     }
 
     public void push(E element) {
-
         if (queueFirst.size() == capacity) {
             throw new IllegalStateException("Stack is full");
         }

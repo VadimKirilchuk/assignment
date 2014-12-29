@@ -8,7 +8,7 @@ import java.util.LinkedList;
 
 public class StackWithQueueAlternativ {
     public static void main(String[] args) {
-        StackClass<String> stackInstance = new StackClass<>(3);
+        MainStack<String> stackInstance = new MainStack<>(3);
         stackInstance.push("1");
         stackInstance.push("2");
         stackInstance.push("3");
@@ -19,7 +19,7 @@ public class StackWithQueueAlternativ {
 
 /**
  * Stack implementation based on two queues.
- * This class provides methods for working with.
+ * This class provides methods for working with stack.
  * This implementation is alternative version of StackWithQueue,
  * it makes some copy job while pushing, to take an object without
  * any problem.
