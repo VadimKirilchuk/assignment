@@ -1,4 +1,4 @@
-package group.idru.assignment;
+package ru.assignment.collections;
 
 /**
  * Hello world!
