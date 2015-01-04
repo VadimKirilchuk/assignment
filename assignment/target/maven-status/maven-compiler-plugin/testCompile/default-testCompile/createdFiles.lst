@@ -1,4 +1,6 @@
-group\idru\assignment\MainStackTest.class
-group\idru\assignment\QueueTest.class
-group\idru\assignment\StackClassTest.class
-group\idru\assignment\AppTest.class
+ru\assignment\collections\TestClass.class
+ru\assignment\collections\CollectionTest.class
+ru\assignment\collections\MainStackTest.class
+ru\assignment\collections\AppTest.class
+ru\assignment\collections\StackClassTest.class
+ru\assignment\collections\QueueTest.class

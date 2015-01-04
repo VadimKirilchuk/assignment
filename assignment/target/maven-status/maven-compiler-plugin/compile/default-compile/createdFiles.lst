@@ -1,7 +1,7 @@
-group\idru\assignment\TwoStackQueue.class
-group\idru\assignment\StackWithQueue.class
-group\idru\assignment\App.class
-group\idru\assignment\StackClass.class
-group\idru\assignment\Queue.class
-group\idru\assignment\StackWithQueueAlternativ.class
-group\idru\assignment\MainStack.class
+ru\assignment\collections\Queue.class
+ru\assignment\collections\App.class
+ru\assignment\collections\StackClass.class
+ru\assignment\collections\MainStack.class
+ru\assignment\collections\TwoStackQueue.class
+ru\assignment\collections\StackWithQueue.class
+ru\assignment\collections\StackWithQueueAlternativ.class

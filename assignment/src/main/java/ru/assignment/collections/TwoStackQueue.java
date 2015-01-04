@@ -3,7 +3,7 @@
  * Version 1.0
  */
 
-package group.idru.assignment;
+package ru.assignment.collections;
 import java.util.Stack;
 
 /**

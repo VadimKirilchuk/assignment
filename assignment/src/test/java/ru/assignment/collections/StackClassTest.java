@@ -1,19 +1,19 @@
 /*
- * Tests for MainStack, which is stack implementation based on two queues .
+ * Tests for StackClass, which is stack implementation based on two queues .
  * Version 1.0
  */
 
-package group.idru.assignment;
+package ru.assignment.collections;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class MainStackTest {
+public class StackClassTest {
     @Test
     public void pushPopTest() {
-        MainStack<String> stack = new MainStack<>(2);
+        StackClass<String> stack = new StackClass<>(2);
         stack.push("1");
         stack.push("2");
 
@@ -23,7 +23,7 @@ public class MainStackTest {
 
     @Test(expected = IllegalStateException.class)
     public void pushExpectedExceptionTest() {
-        MainStack<String> stack = new MainStack<>(2);
+        StackClass<String> stack = new StackClass<>(2);
         stack.push("1");
         stack.push("2");
         stack.push("3");
@@ -31,7 +31,7 @@ public class MainStackTest {
 
     @Test(expected = IllegalStateException.class)
     public void popExpectedExceptionTest() {
-        MainStack<String> stack = new MainStack<>(1);
+        StackClass<String> stack = new StackClass<>(1);
         stack.push("1");
         stack.pop();
         stack.pop();
@@ -39,7 +39,7 @@ public class MainStackTest {
 
     @Test
     public void isEmptyStackTest() {
-        MainStack<String> stack = new MainStack<>(1);
+        StackClass<String> stack = new StackClass<>(1);
         stack.push("1");
 
         assertFalse(stack.isEmpty());
