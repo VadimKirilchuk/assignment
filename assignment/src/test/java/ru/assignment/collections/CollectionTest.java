@@ -152,7 +152,7 @@ public class CollectionTest {
 
     @Test
     @Parameters
-    public void WordsTest(List list, int countOfUniqueWords, int firstWordCount,
+    public void wordsTest(List list, int countOfUniqueWords, int firstWordCount,
                           String firstWord, int secondWordCount, String secondWord,
                           int thirdWordCount, String thirdWord) {
         collection.addAll(list);
