@@ -1,8 +1,7 @@
-package exersises;
+package exersices;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.List;
