@@ -1,0 +1,40 @@
+@startuml
+
+
+package "ru.assignment.chat.server.net" #DDDDDD {
+    class ServerConfiguration {
+        -int port
+        +int getPort()
+    }
+    
+    class ChatServer {
+        -List<Session> sessions
+        +start()
+        +shutdown()
+        +onNewMessage(Message msg)
+    }
+    note right of ChatServer {
+       On start method new thread should be created which listens
+       to new connections and creates new Sessions for them. 
+    }
+    
+    class Session {
+        +listen()
+        +sendMessage(Message msg)
+        +stop()
+    } 
+}
+
+package "ru.assignment.chat.server.model" {
+    class ChatModel {
+        -List<Message> chatMessages
+        +addNewMessage(Message msg)
+        +addChatMessageListener()
+    }
+    
+    interface ChatChangeListener {
+        +onNewMessage(Message msg)
+    }
+    ChatChangeListener <|-- ChatServer
+}
+@enduml

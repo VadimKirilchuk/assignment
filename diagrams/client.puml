@@ -1,0 +1,35 @@
+@startuml
+
+
+package "ru.assignment.chat.client.net" #DDDDDD {
+    class ClientConfiguration {
+        -String serverHost
+        -int serverPort
+        +String getServerHost()
+        +int getSeverPort()
+    }
+    
+    class Receiver {
+       +listen()
+       +onMessage(Message msg)
+       +stop()
+    }
+    note right of Receiver {
+        Receiver listens messages from server
+        in a separate Thread 
+    }
+    
+    class Sender {
+        +send(Message msg)
+    }
+    
+    class ChatClient {
+        -ClientConfiguration configuration
+        -Sender
+        -Receiver
+        +connect()
+        +disconnect()
+        +send(Message msg)
+    }
+}
+@enduml
