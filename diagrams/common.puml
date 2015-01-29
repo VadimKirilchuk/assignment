@@ -1,0 +1,10 @@
+@startuml
+
+
+package "ru.assignment.chat.common" #DDDDDD {
+    class ChatMessage {
+        -String text
+        +String getMessage()
+    }
+}
+@enduml
