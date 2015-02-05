@@ -1,4 +1,4 @@
-package exersices;
+package exercises;
 
 import java.io.File;
 import java.io.FileFilter;
