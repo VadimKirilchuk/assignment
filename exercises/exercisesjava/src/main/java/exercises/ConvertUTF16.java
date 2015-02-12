@@ -25,5 +25,5 @@ public class ConvertUTF16 {
         return charArray;
     }
 
-   
+
 }
