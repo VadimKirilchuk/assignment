@@ -60,10 +60,10 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"/>
   </properties>
-  <testcase time="0.009" classname="ru.assignment.collections.AppTest" name="[0] testmy, ymtset (reverseTest)"/>
+  <testcase time="0.012" classname="ru.assignment.collections.AppTest" name="[0] testmy, ymtset (reverseTest)"/>
   <testcase time="0" classname="ru.assignment.collections.AppTest" name="[1] ,  (reverseTest)"/>
-  <testcase time="0.004" classname="ru.assignment.collections.AppTest" name="[2] 12, 21 (reverseTest)"/>
-  <testcase time="0.002" classname="ru.assignment.collections.AppTest" name="[0] testmy, ymtset (hashMapTest)"/>
+  <testcase time="0.001" classname="ru.assignment.collections.AppTest" name="[2] 12, 21 (reverseTest)"/>
+  <testcase time="0.001" classname="ru.assignment.collections.AppTest" name="[0] testmy, ymtset (hashMapTest)"/>
   <testcase time="0" classname="ru.assignment.collections.AppTest" name="[1] ,  (hashMapTest)"/>
-  <testcase time="0" classname="ru.assignment.collections.AppTest" name="[2] 12, 21 (hashMapTest)"/>
+  <testcase time="0.001" classname="ru.assignment.collections.AppTest" name="[2] 12, 21 (hashMapTest)"/>
 </testsuite>
