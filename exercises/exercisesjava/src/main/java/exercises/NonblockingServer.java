@@ -39,25 +39,26 @@ public class NonblockingServer {
         firststep:
         while (true) {
             // waiting for clients
-            selector.select();
+            System.out.println(selector.select());
 
-            try (FileOutputStream outputStream = new FileOutputStream("e:\\outTxt.txt", true)) {
-                //get a set of keys which want to make any action
-                Set<SelectionKey> set = selector.selectedKeys();
-                Iterator<SelectionKey> iterator = set.iterator();
-                while (iterator.hasNext()) {
-                    SelectionKey key = iterator.next();
-                    iterator.remove();
-                    if (key.isAcceptable()) {
-                        SocketChannel socketChannel = serverChannel.accept();
-                        socketChannel.configureBlocking(false);
-                        //registration channel to be able to know  what time to read data
-                        socketChannel.register(selector, SelectionKey.OP_READ);
-                        continue;
-                    }
-                    buffer = ByteBuffer.allocate(36);
-                    if (key.isReadable()) {
-                        SocketChannel socketChannel = (SocketChannel) key.channel();
+            //get a set of keys which want to make any action
+            Set<SelectionKey> set = selector.selectedKeys();
+            Iterator<SelectionKey> iterator = set.iterator();
+            while (iterator.hasNext()) {
+                SelectionKey key = iterator.next();
+                iterator.remove();
+                if (key.isAcceptable()) {
+                    SocketChannel socketChannel = serverChannel.accept();
+                    socketChannel.configureBlocking(false);
+                    //registration channel to be able to know  what time to read data
+                    socketChannel.register(selector, SelectionKey.OP_READ);
+                    continue;
+                }
+                buffer = ByteBuffer.allocate(36);
+                if (key.isReadable()) {
+                    System.out.println("read");
+                    SocketChannel socketChannel = (SocketChannel) key.channel();
+                    try (FileOutputStream outputStream = new FileOutputStream("e:\\outTxt.txt", true)) {
                         //working till EOS
                         while (socketChannel.read(buffer) != -1) {
                             buffer.flip();
@@ -65,7 +66,8 @@ public class NonblockingServer {
                             buffer.clear();
                         }
                         //if we will't close a channel than get EOS loop
-                        socketChannel.close();
+                        //socketChannel.close();
+                        //outputStream.close();
                         continue;
                     }
                 }
