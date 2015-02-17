@@ -11,15 +11,16 @@ import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.util.Iterator;
+import java.util.Scanner;
 import java.util.Set;
 
-public class NonblockingClient {
+public class ConsoleNonblockingClient {
     private ByteBuffer buffer;
 
     public static void main(String[] args) {
 
         try {
-            new NonblockingClient().clientStart();
+            new ConsoleNonblockingClient().clientStart();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -38,6 +39,7 @@ public class NonblockingClient {
                 finishConnectChannel(channel);
             }
             //write data from stream to channel
+            System.out.println("wr");
             writeData(channel);
         }
     }
@@ -63,12 +65,16 @@ public class NonblockingClient {
     }
 
     public void writeData(SocketChannel channel) throws IOException {
-        try (FileInputStream fileStream = new FileInputStream("e:\\strtxt.txt");
-             ReadableByteChannel readableByteChannel = Channels.newChannel(fileStream)) {
-            while (readableByteChannel.read(buffer) != -1) {
-                buffer.flip();
-                channel.write(buffer);
-                buffer.clear();
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (scanner.hasNextLine()) {
+                try (FileInputStream fileStream = new FileInputStream(scanner.nextLine());
+                     ReadableByteChannel readableByteChannel = Channels.newChannel(fileStream)) {
+                    while (readableByteChannel.read(buffer) != -1) {
+                        buffer.flip();
+                        channel.write(buffer);
+                        buffer.clear();
+                    }
+                }
             }
         }
     }

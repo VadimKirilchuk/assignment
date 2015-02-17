@@ -8,10 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.SelectionKey;
-import java.nio.channels.Selector;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
+import java.nio.channels.*;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -30,17 +27,10 @@ public class NonblockingServer {
         //make server channel
         ServerSocketChannel serverChannel = ServerSocketChannel.open();
         Selector selector = Selector.open();
-        //put channel to non-blocking mode
-        serverChannel.configureBlocking(false);
-        //bound to port 8188
-        serverChannel.socket().bind(new InetSocketAddress(8188));
-        //registration server channel at selector, so we will know if client will want to make connection
-        serverChannel.register(selector, SelectionKey.OP_ACCEPT);
-        firststep:
+        configurate(serverChannel, selector);
         while (true) {
             // waiting for clients
-            System.out.println(selector.select());
-
+            selector.select();
             //get a set of keys which want to make any action
             Set<SelectionKey> set = selector.selectedKeys();
             Iterator<SelectionKey> iterator = set.iterator();
@@ -48,30 +38,66 @@ public class NonblockingServer {
                 SelectionKey key = iterator.next();
                 iterator.remove();
                 if (key.isAcceptable()) {
-                    SocketChannel socketChannel = serverChannel.accept();
-                    socketChannel.configureBlocking(false);
-                    //registration channel to be able to know  what time to read data
-                    socketChannel.register(selector, SelectionKey.OP_READ);
+                    accept(key, selector);
                     continue;
                 }
-                buffer = ByteBuffer.allocate(36);
                 if (key.isReadable()) {
+                    read(key);
                     System.out.println("read");
-                    SocketChannel socketChannel = (SocketChannel) key.channel();
-                    try (FileOutputStream outputStream = new FileOutputStream("e:\\outTxt.txt", true)) {
-                        //working till EOS
-                        while (socketChannel.read(buffer) != -1) {
-                            buffer.flip();
-                            outputStream.write(buffer.slice().array());
-                            buffer.clear();
-                        }
-                        //if we will't close a channel than get EOS loop
-                        //socketChannel.close();
-                        //outputStream.close();
-                        continue;
-                    }
+                    continue;
                 }
             }
         }
     }
+
+    public void configurate(ServerSocketChannel serverChannel,
+                            Selector selector) throws IOException {
+        //put channel to non-blocking mode
+        serverChannel.configureBlocking(false);
+        //bound to port 8188
+        serverChannel.socket().bind(new InetSocketAddress(8188));
+        //registration server channel at selector, so we will know
+        // if client will want to make connection
+        serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+    }
+
+    public void accept(SelectionKey key,
+                       Selector selector) throws IOException {
+        SocketChannel socketChannel = ((ServerSocketChannel) key.channel()).accept();
+        socketChannel.configureBlocking(false);
+        //registration channel to be able to know  what time to read data
+        socketChannel.register(selector, SelectionKey.OP_READ);
+    }
+
+    public void read(SelectionKey key) throws IOException {
+        SocketChannel socketChannel = (SocketChannel) key.channel();
+        buffer = ByteBuffer.allocate(36);
+        int read;
+        try {
+            read = socketChannel.read(buffer);
+        } catch (IOException e) {
+            socketChannel.close();
+            return;
+        }
+        if (read == -1) {
+            socketChannel.close();
+            return;
+        }
+        try {
+            buffer.flip();
+            writeToFile(buffer);
+            buffer.clear();
+        } catch (IOException e) {
+            socketChannel.close();
+            return;
+        }
+    }
+
+    public void writeToFile(ByteBuffer buffer) throws IOException {
+        try (FileOutputStream outputStream = new FileOutputStream("e:\\outTxt.txt", true);
+             WritableByteChannel channelForWriting = Channels.newChannel(outputStream)) {
+            channelForWriting.write(buffer);
+        }
+    }
 }
+
