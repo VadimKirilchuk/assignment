@@ -1,5 +1,6 @@
 package exercises;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -56,6 +57,7 @@ public class BaseSocket {
                             writer.println("echo" + string);
                             if (string.trim().equals("BBB")) {
                                 //done = true;
+
                             }
                         }
                     }
@@ -74,6 +76,7 @@ public class BaseSocket {
                 Thread thread =new Thread(clientThread);
                 thread.start();
                 count++;
+
             }
         }
     }
