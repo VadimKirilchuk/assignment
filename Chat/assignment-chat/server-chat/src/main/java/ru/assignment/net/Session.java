@@ -13,18 +13,18 @@ public class Session implements Runnable {
     private int sessionIdentifier;
     private ChatModel chatModel;
     private Scanner scanner;
-    private PrintWriter  writer;
+    public PrintWriter  writer;
 
     public Session(Socket socket, int sessionIdentifier,
                    ChatModel chatModel) {
         this.socket = socket;
         this.sessionIdentifier = sessionIdentifier;
         this.chatModel = chatModel;
+        initStreams();
 //        chatModel.addListener(this);
     }
 
     public void run() {
-        initStreams();
         listen();
         closeSession();
     }
@@ -53,7 +53,7 @@ public class Session implements Runnable {
         try {
             scanner = new Scanner(socket.getInputStream());
             writer = new PrintWriter(socket.getOutputStream());
-            System.out.println("writer");
+            System.out.println("writer"+writer);
         } catch (IOException e) {
 
         }

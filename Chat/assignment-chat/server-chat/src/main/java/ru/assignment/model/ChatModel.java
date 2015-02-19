@@ -25,6 +25,7 @@ public class ChatModel {
     }
 
     public void addListener(Integer identifier, Session listener) {
+        System.out.println(listener.writer);
         listenerMap.put(identifier, listener);
         sendAllMessagesToNewListener(listener);
     }

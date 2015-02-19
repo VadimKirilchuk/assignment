@@ -49,9 +49,11 @@ public class ServerThread implements Runnable {
                                 ChatModel chatModel) {
         Session session = new Session(socket, sessionCount, chatModel);
 
-        chatModel.addListener(sessionCount, session);
+
         Thread sessionThread = new Thread(session);
         sessionThread.start();
+
+        chatModel.addListener(sessionCount, session);
         sessionCount++;
     }
 
