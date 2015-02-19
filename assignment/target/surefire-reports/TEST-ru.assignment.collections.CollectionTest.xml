@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.009" errors="0" skipped="0" tests="11" name="ru.assignment.collections.CollectionTest">
+<testsuite failures="0" time="0.017" errors="0" skipped="0" tests="11" name="ru.assignment.collections.CollectionTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.7.0_11\jre\bin"/>
@@ -65,10 +65,10 @@
   <testcase time="0" classname="ru.assignment.collections.CollectionTest" name="[0] [1, 3, 2], 1 (searchElementTest)"/>
   <testcase time="0" classname="ru.assignment.collections.CollectionTest" name="[0] [1, 3, 2], 1 (minElementTest)"/>
   <testcase time="0" classname="ru.assignment.collections.CollectionTest" name="[0] [7, 6, 5, 4, 3, 2, 1] (shuffleElementTest)"/>
-  <testcase time="0.008" classname="ru.assignment.collections.CollectionTest" name="[0] [1, 3, 3, 4, 5, 5, 5], 3 (findSequenceTest)"/>
+  <testcase time="0.017" classname="ru.assignment.collections.CollectionTest" name="[0] [1, 3, 3, 4, 5, 5, 5], 3 (findSequenceTest)"/>
   <testcase time="0" classname="ru.assignment.collections.CollectionTest" name="[0] [a, b, c, a, a, b, b, c, b], 3, 3, a, 4, b, 2, c (wordsTest)"/>
   <testcase time="0" classname="ru.assignment.collections.CollectionTest" name="[0] [3, 2, 1], 3 (addElementTest)"/>
   <testcase time="0" classname="ru.assignment.collections.CollectionTest" name="[1] [3, 2, 1], 2 (addElementTest)"/>
   <testcase time="0" classname="ru.assignment.collections.CollectionTest" name="[2] [3, 2, 1], 1 (addElementTest)"/>
-  <testcase time="0.001" classname="ru.assignment.collections.CollectionTest" name="[0] [1, 3, 12, 15, 7, 31], 2, 15, 31 (fewMaxElementTest)"/>
+  <testcase time="0" classname="ru.assignment.collections.CollectionTest" name="[0] [1, 3, 12, 15, 7, 31], 2, 15, 31 (fewMaxElementTest)"/>
 </testsuite>

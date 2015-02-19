@@ -25,17 +25,20 @@ public class ChatServer {
 
     public void waitForCommand(Thread serverSessionThread) {
         try (Scanner scanner = new Scanner(System.in)) {
-            while (serverSessionThread.isAlive()) {
                 System.out.println("For close all sessions enter <quit>");
                 while (scanner.hasNextLine()) {
                     String consoleCommand = scanner.nextLine();
                     if (consoleCommand.equalsIgnoreCase("quit")) {
                         shutDown(serverSessionThread);
+                        break;
                     } else {
                         System.out.println("Wrong command,try again/for close  please enter <quit>");
                     }
                 }
-            }
+                if(serverSessionThread.isAlive()){
+                    shutDown(serverSessionThread);
+                }
+
         }
     }
 
