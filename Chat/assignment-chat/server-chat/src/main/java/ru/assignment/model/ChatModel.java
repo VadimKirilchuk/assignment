@@ -1,61 +1,54 @@
 package ru.assignment.model;
 
 import ru.assignment.ChatMessage;
-import ru.assignment.net.Session;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Андрей on 18.02.2015.
  */
 public class ChatModel {
-    private Map<Integer, Session> listenerMap;
+    private Set<ChatModelListener> listenerSet;
     private List<ChatMessage> messageList;
-    private int messageSizeList;
+    // private int messageSizeList;
 
-    public ChatModel(Map listenerMap) {
-        this.listenerMap = listenerMap;
-        messageList = new ArrayList<>();
+    public ChatModel() {
+        listenerSet = new HashSet<ChatModelListener>();
+        messageList = new ArrayList<ChatMessage>();
     }
 
-    public void addMessage(ChatMessage chatMessage, int sessionIdentifier) {
-        messageSizeList++;
+    public void addMessage(ChatMessage chatMessage,
+                           ChatModelListener chatModelListener) {
+        //messageSizeList++;
         messageList.add(chatMessage);
-        sendMessageToAllListeners(chatMessage, sessionIdentifier);
+        sendMessageToAllListeners(chatMessage, chatModelListener);
     }
 
-    public void addListener(Integer identifier, Session listener) {
-        System.out.println(listener.writer);
-        listenerMap.put(identifier, listener);
+    public void addListener(ChatModelListener listener) {
+        listenerSet.add(listener);
         sendAllMessagesToNewListener(listener);
     }
 
     public void removeListener(int identifier) {
-        listenerMap.remove(identifier);
+        listenerSet.remove(identifier);
     }
 
-    public void sendAllMessagesToNewListener(Session listener) {
-        if (messageSizeList > 0) {
-            int startPoint;
-            if (messageSizeList > 50) {
-                startPoint = messageSizeList - 50;
-            } else {
-                startPoint = 0;
-            }
-            for (int i = startPoint; i < messageSizeList; i++) {
-                listener.sentMessageToClient(messageList.get(i));
-            }
+    public void sendAllMessagesToNewListener(ChatModelListener listener) {
+        int size = messageList.size();
+        int startIndex = (Math.min(size, 30) == 30 ? (size - 30) : 0);
+        for (int i = startIndex; i < size; i++) {
+            listener.sendMessageToClient(messageList.get(i));
         }
     }
 
-    public void sendMessageToAllListeners(ChatMessage chatMessage, int sessionIdentifier) {
-        Set<Map.Entry<Integer, Session>> entrySet = listenerMap.entrySet();
-        Iterator<Map.Entry<Integer, Session>> iterator = entrySet.iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Integer, Session> entry = iterator.next();
-            if (entry.getKey() != sessionIdentifier) {
-                entry.getValue().sentMessageToClient(chatMessage);
+    public void sendMessageToAllListeners(ChatMessage chatMessage,
+                                          ChatModelListener chatModelListener) {
+        for (ChatModelListener listener : listenerSet)
+            if (!listener.equals(chatModelListener)) {
+                listener.sendMessageToClient(chatMessage);
             }
-        }
     }
 }

@@ -15,12 +15,17 @@ import java.util.Scanner;
  * Created by Андрей on 07.02.2015.
  */
 public class BaseSocket {
+   private int f;
     public static void main(String[] args) throws IOException {
+
         //String str=new String(" d g 4 ");
         //System.out.println("f"+str);
-        multiServer();
+       System.out.println(new BaseSocket().f);
     }
 
+public BaseSocket(){
+    //this.f=5;
+}
     public static void inetAdress() throws UnknownHostException {
         InetAddress localAddress = InetAddress.getLocalHost();
         System.out.println(localAddress);

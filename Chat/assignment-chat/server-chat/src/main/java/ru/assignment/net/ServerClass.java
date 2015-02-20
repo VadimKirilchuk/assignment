@@ -13,17 +13,17 @@ import java.util.Map;
 /**
  * Created by Андрей on 18.02.2015.
  */
-public class ServerThread implements Runnable {
-    private int port;
+public class ServerClass implements Runnable {
+    private final int port;
     private  ChatModel chatModel;
     private ServerSocket serverSocket;
     private Map<Integer, Session> sessionMap;
-    int sessionCount;
+    private int sessionCount;
 
-    public ServerThread(int port) {
+    public ServerClass(int port,ChatModel chatModel) {
         this.port = port;
         sessionMap = new HashMap();
-        chatModel = new ChatModel(sessionMap);
+        this.chatModel=chatModel;
     }
 
     public void run() {
@@ -46,14 +46,10 @@ public class ServerThread implements Runnable {
     }
 
     public void startNewSession(Socket socket, int sessionCount,
-                                ChatModel chatModel) {
+                                ChatModel chatModel) throws IOException{
         Session session = new Session(socket, sessionCount, chatModel);
-
-
         Thread sessionThread = new Thread(session);
         sessionThread.start();
-
-        chatModel.addListener(sessionCount, session);
         sessionCount++;
     }
 

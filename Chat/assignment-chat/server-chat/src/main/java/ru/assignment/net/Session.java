@@ -2,25 +2,26 @@ package ru.assignment.net;
 
 import ru.assignment.ChatMessage;
 import ru.assignment.model.ChatModel;
+import ru.assignment.model.ChatModelListener;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Session implements Runnable {
+public class Session implements Runnable, ChatModelListener {
     private Socket socket;
-    private int sessionIdentifier;
+    private final int sessionIdentifier;
     private ChatModel chatModel;
     private Scanner scanner;
-    public PrintWriter  writer;
+    private PrintWriter writer;
 
     public Session(Socket socket, int sessionIdentifier,
-                   ChatModel chatModel) {
+                   ChatModel chatModel) throws IOException {
         this.socket = socket;
         this.sessionIdentifier = sessionIdentifier;
         this.chatModel = chatModel;
-        initStreams();
+        initConfiguration();
 //        chatModel.addListener(this);
     }
 
@@ -44,18 +45,20 @@ public class Session implements Runnable {
         }
     }
 
-    public void sentMessageToChatModel(String message) {
+    public void sendMessageToChatModel(String message) {
         ChatMessage chatMessage = new ChatMessage(message);
-        chatModel.addMessage(chatMessage,sessionIdentifier);
+        chatModel.addMessage(chatMessage, this);
     }
 
-    public void initStreams() {
+    public void initConfiguration() throws IOException {
         try {
             scanner = new Scanner(socket.getInputStream());
             writer = new PrintWriter(socket.getOutputStream());
-            System.out.println("writer"+writer);
+            chatModel.addListener(this);
+            System.out.println("writer" + writer);
         } catch (IOException e) {
-
+            closeSocket();
+            throw e;
         }
     }
 
@@ -67,14 +70,35 @@ public class Session implements Runnable {
             if (message.equalsIgnoreCase("disconnect")) {
                 break;
             }
-            sentMessageToChatModel(message);
+            sendMessageToChatModel(message);
         }
     }
 
-    public void sentMessageToClient(ChatMessage chatMessage) {
+    public void sendMessageToClient(ChatMessage chatMessage) {
         String message = chatMessage.getMessage();
-        System.out.println(message);
-        System.out.println(writer);
+        //System.out.println(message);
+        //System.out.println(writer);
         writer.write(message);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null) {
+            return false;
+        }
+        if (this == object) {
+            return true;
+        }
+        if (this.getClass() == object.getClass()) {
+            Session sessionObject = (Session) object;
+            return this.sessionIdentifier == sessionObject.sessionIdentifier;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return sessionIdentifier;
     }
 }
