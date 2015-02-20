@@ -5,22 +5,24 @@ import ru.assignment.model.ChatModel;
 import java.util.Scanner;
 
 public class ChatServer {
-    private final int  port;
     private ServerClass serverClass;
     private ChatModel chatModel;
+    private ServerConfiguration serverConfiguration;
 
     public static void main(String[] args) {
         ServerConfiguration serverConfiguration = new ServerConfiguration(8185);
-        ChatServer server = new ChatServer(serverConfiguration);
+        ChatModel chatModel1=new ChatModel();
+        ChatServer server = new ChatServer(serverConfiguration,chatModel1);
         server.start();
     }
 
-    public ChatServer(ServerConfiguration serverConfiguration) {
-        chatModel=new ChatModel();
-        port = serverConfiguration.getPort();
+    public ChatServer(ServerConfiguration serverConfiguration,ChatModel chatModel) {
+        this.chatModel=chatModel;
+        this.serverConfiguration = serverConfiguration;
     }
 
     public void start() {
+        int port=serverConfiguration.getPort();
         serverClass = new ServerClass(port,chatModel);
         Thread serverSessionThread = new Thread(serverClass);
         serverSessionThread.start();

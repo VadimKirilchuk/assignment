@@ -53,6 +53,7 @@ public class ServerClass implements Runnable {
             return;
         }
         sessionSet.add(session);
+        System.out.println("start session");
         Thread sessionThread = new Thread(session);
         sessionThread.start();
         sessionCount++;

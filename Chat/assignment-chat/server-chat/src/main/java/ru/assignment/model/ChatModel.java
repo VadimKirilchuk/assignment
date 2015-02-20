@@ -1,6 +1,6 @@
 package ru.assignment.model;
 
-import ru.assignment.ChatMessage;
+import ru.assignment.message.ChatMessage;
 
 import java.util.ArrayList;
 import java.util.HashSet;

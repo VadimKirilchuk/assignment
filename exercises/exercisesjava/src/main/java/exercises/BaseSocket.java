@@ -1,6 +1,7 @@
 package exercises;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -20,12 +21,33 @@ public class BaseSocket {
 
         //String str=new String(" d g 4 ");
         //System.out.println("f"+str);
-       System.out.println(new BaseSocket().f);
+     Scanner sc=new Scanner(System.in);
+        sc.close();
+        System.out.println(sc.next());
     }
 
 public BaseSocket(){
     //this.f=5;
 }
+    public void client()throws IOException{
+        Socket socket=new Socket("localhost",8183);
+        PrintWriter writer=new PrintWriter(socket.getOutputStream());
+        int i=10;
+        while(i>0){
+            writer.write("test");
+            i--;
+        }
+        socket.close();
+    }
+    public void server() throws  IOException{
+        ServerSocket serverSocket=new ServerSocket(8183);
+        Socket socket=serverSocket.accept();
+        Scanner scanner=new Scanner(socket.getInputStream());
+        while(scanner.hasNextLine()){
+            System.out.println(scanner.nextLine());
+        }
+    }
+
     public static void inetAdress() throws UnknownHostException {
         InetAddress localAddress = InetAddress.getLocalHost();
         System.out.println(localAddress);

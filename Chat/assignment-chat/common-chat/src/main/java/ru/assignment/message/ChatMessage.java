@@ -1,4 +1,4 @@
-package ru.assignment;
+package ru.assignment.message;
 
 /**
  * Created by Андрей on 18.02.2015.

@@ -1,6 +1,6 @@
 package ru.assignment.net;
 
-import ru.assignment.ChatMessage;
+import ru.assignment.message.ChatMessage;
 import ru.assignment.model.ChatModel;
 import ru.assignment.model.ChatModelListener;
 
@@ -25,6 +25,7 @@ public class Session implements Runnable, ChatModelListener {
     }
 
     public void run() {
+        System.out.println("inside");
         listen();
         closeSession();
     }
@@ -63,8 +64,10 @@ public class Session implements Runnable, ChatModelListener {
     // public void setListenerForChatModel(OutputStream outputStream){
 
     public void listen() {
+        System.out.println("before");
         while (scanner.hasNextLine()) {
             String message = scanner.nextLine();
+            System.out.println(message +"  test message");
             if (message.equalsIgnoreCase("disconnect")) {
                 break;
             }
