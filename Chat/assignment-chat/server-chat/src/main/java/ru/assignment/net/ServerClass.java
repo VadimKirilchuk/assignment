@@ -5,56 +5,61 @@ import ru.assignment.model.ChatModel;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Андрей on 18.02.2015.
  */
 public class ServerClass implements Runnable {
     private final int port;
-    private  ChatModel chatModel;
+    private ChatModel chatModel;
     private ServerSocket serverSocket;
-    private Map<Integer, Session> sessionMap;
+    private Set<Session> sessionSet;
     private int sessionCount;
 
-    public ServerClass(int port,ChatModel chatModel) {
+    public ServerClass(int port, ChatModel chatModel) {
         this.port = port;
-        sessionMap = new HashMap();
-        this.chatModel=chatModel;
+        this.chatModel = chatModel;
+        sessionSet = new HashSet<Session>();
     }
 
     public void run() {
-
         try {
             serverSocket = new ServerSocket(port);
-            while (!serverSocket.isClosed()) {
-                Socket socket = serverSocket.accept();
-                System.out.println("test");
-                startNewSession(socket, sessionCount, chatModel);
+            try {
+                while (!serverSocket.isClosed()) {
+                    Socket socket = serverSocket.accept();
+                    System.out.println("test");
+                    startNewSession(socket, sessionCount, chatModel);
+                }
+                checkConnections();
+            } catch (IOException e) {
+                checkConnections();
             }
         } catch (IOException a) {
-            checkConnections();
-            if (!serverSocket.isClosed()) {
-                closeThread();
-            } else {
-                a.printStackTrace();
-            }
+            closeThread();
+            a.printStackTrace();
         }
     }
 
     public void startNewSession(Socket socket, int sessionCount,
-                                ChatModel chatModel) throws IOException{
-        Session session = new Session(socket, sessionCount, chatModel);
+                                ChatModel chatModel) {
+        Session session = null;
+        try {
+            session = new Session(socket, sessionCount, chatModel);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        sessionSet.add(session);
         Thread sessionThread = new Thread(session);
         sessionThread.start();
         sessionCount++;
     }
 
     public void checkConnections() {
-        if (!sessionMap.isEmpty()) {
+        if (!sessionSet.isEmpty()) {
             clearConnections();
         } else {
             return;
@@ -62,10 +67,7 @@ public class ServerClass implements Runnable {
     }
 
     public void clearConnections() {
-        Collection<Session> sessionCollection = sessionMap.values();
-        Iterator<Session> iterator = sessionCollection.iterator();
-        while (iterator.hasNext()) {
-            Session session = iterator.next();
+        for (Session session : sessionSet) {
             session.closeSession();
         }
     }

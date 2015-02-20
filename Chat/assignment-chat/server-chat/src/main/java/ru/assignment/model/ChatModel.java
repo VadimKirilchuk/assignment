@@ -13,7 +13,6 @@ import java.util.Set;
 public class ChatModel {
     private Set<ChatModelListener> listenerSet;
     private List<ChatMessage> messageList;
-    // private int messageSizeList;
 
     public ChatModel() {
         listenerSet = new HashSet<ChatModelListener>();

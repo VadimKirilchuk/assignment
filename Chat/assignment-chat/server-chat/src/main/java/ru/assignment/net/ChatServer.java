@@ -11,14 +11,13 @@ public class ChatServer {
 
     public static void main(String[] args) {
         ServerConfiguration serverConfiguration = new ServerConfiguration(8185);
-        ChatModel chatModel=new ChatModel();
-        ChatServer server = new ChatServer(serverConfiguration,chatModel);
+        ChatServer server = new ChatServer(serverConfiguration);
         server.start();
     }
 
-    public ChatServer(ServerConfiguration serverConfiguration,ChatModel chatModel) {
+    public ChatServer(ServerConfiguration serverConfiguration) {
+        chatModel=new ChatModel();
         port = serverConfiguration.getPort();
-        this.chatModel=chatModel;
     }
 
     public void start() {

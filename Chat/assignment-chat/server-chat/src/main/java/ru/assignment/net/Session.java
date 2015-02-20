@@ -22,7 +22,6 @@ public class Session implements Runnable, ChatModelListener {
         this.sessionIdentifier = sessionIdentifier;
         this.chatModel = chatModel;
         initConfiguration();
-//        chatModel.addListener(this);
     }
 
     public void run() {
@@ -54,12 +53,11 @@ public class Session implements Runnable, ChatModelListener {
         try {
             scanner = new Scanner(socket.getInputStream());
             writer = new PrintWriter(socket.getOutputStream());
-            chatModel.addListener(this);
-            System.out.println("writer" + writer);
         } catch (IOException e) {
             closeSocket();
             throw e;
         }
+        chatModel.addListener(this);
     }
 
     // public void setListenerForChatModel(OutputStream outputStream){
