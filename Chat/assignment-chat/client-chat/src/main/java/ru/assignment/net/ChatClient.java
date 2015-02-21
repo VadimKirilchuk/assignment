@@ -29,7 +29,9 @@ public class ChatClient {
             e.printStackTrace();
             return;
         }
+        System.out.println("beforestartSession");
         startSession();
+        System.out.println("beforefinishSession");
         finishSession();
 
     }
@@ -43,6 +45,7 @@ public class ChatClient {
     }
 
     public void startSession() {
+        System.out.println("startSession");
         Thread receiverThread = new Thread(receiver);
         receiverThread.start();
         sender.startSender();
@@ -53,6 +56,7 @@ public class ChatClient {
 
     public void finishSession() {
         try {
+            System.out.println("finishSession");
             clientSocket.close();
         }catch (IOException e){
             e.printStackTrace();

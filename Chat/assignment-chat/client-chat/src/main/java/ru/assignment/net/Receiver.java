@@ -19,14 +19,17 @@ public class Receiver implements Runnable {
     }
 
     public void run() {
-
+        System.out.println("run receiver");
         listen();
     }
 
     public void listen() {
         try {
+            System.out.println("receiver wait message");
             while (reader.hasNextLine()) {
+
                 String message = reader.nextLine();
+                System.out.println("get message to receiver "+message);
                 System.out.println(message);
             }
         } finally {
@@ -35,7 +38,10 @@ public class Receiver implements Runnable {
     }
 
     public void closeReceiver() {
+        System.out.println("close receiver");
         reader.close();
+        if(sender.isOpen()){
         sender.closeSender();
+        }
     }
 }

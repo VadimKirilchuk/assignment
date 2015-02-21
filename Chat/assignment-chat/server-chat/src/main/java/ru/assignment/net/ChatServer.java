@@ -22,6 +22,7 @@ public class ChatServer {
     }
 
     public void start() {
+        System.out.println("startServer");
         int port=serverConfiguration.getPort();
         serverClass = new ServerClass(port,chatModel);
         Thread serverSessionThread = new Thread(serverClass);
@@ -48,6 +49,7 @@ public class ChatServer {
     }
 
     public void shutDown(Thread serverSessionThread) {
+        System.out.println("close ServerClass thread");
         serverClass.closeThread();
         try {
             serverSessionThread.join();

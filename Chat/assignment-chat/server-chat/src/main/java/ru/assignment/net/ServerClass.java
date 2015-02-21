@@ -28,10 +28,12 @@ public class ServerClass implements Runnable {
         try {
             serverSocket = new ServerSocket(port);
             try {
+                System.out.println("beforeServerClassrun");
                 while (!serverSocket.isClosed()) {
+                    System.out.println("beforeServerClassaccept");
                     Socket socket = serverSocket.accept();
-                    System.out.println("test");
-                    startNewSession(socket, sessionCount, chatModel);
+                    System.out.println("afterServerClassaccept completed");
+                    startNewSession(socket, chatModel);
                 }
                 checkConnections();
             } catch (IOException e) {
@@ -43,23 +45,28 @@ public class ServerClass implements Runnable {
         }
     }
 
-    public void startNewSession(Socket socket, int sessionCount,
+    public void startNewSession(Socket socket,
                                 ChatModel chatModel) {
         Session session = null;
         try {
+            System.out.println("session count for new listeners " + sessionCount);
             session = new Session(socket, sessionCount, chatModel);
         } catch (IOException e) {
             e.printStackTrace();
             return;
         }
+
         sessionSet.add(session);
-        System.out.println("start session");
+        //System.out.println("start session");
         Thread sessionThread = new Thread(session);
+        System.out.println("beforestartSession");
         sessionThread.start();
+
         sessionCount++;
     }
 
     public void checkConnections() {
+        System.out.println("ServerClass check connection");
         if (!sessionSet.isEmpty()) {
             clearConnections();
         } else {
@@ -68,6 +75,7 @@ public class ServerClass implements Runnable {
     }
 
     public void clearConnections() {
+        System.out.println("clear All sessions ServerClass");
         for (Session session : sessionSet) {
             session.closeSession();
         }
@@ -75,6 +83,7 @@ public class ServerClass implements Runnable {
 
     public void closeThread() {
         try {
+            System.out.println("ServerClass close serversocket");
             serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
