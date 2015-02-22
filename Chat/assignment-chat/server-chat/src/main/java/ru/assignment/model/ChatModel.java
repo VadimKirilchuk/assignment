@@ -31,7 +31,6 @@ public class ChatModel {
         System.out.println("ChatModel add new listener");
         listenerSet.add(listener);
         System.out.println("model set sum "+listenerSet.size());
-        sendAllMessagesToNewListener(listener);
     }
 
     public void removeListener(int identifier) {

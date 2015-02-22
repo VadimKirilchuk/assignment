@@ -1,6 +1,7 @@
 package ru.assignment.net;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -9,52 +10,57 @@ import java.util.Scanner;
  */
 public class Sender {
     private Socket clientSocket;
-    private PrintWriter writer;
+    private OutputStreamWriter writer;
     private Scanner scanner;
-    private boolean isOpen=false;
+    private boolean isOpen = false;
 
     public Sender(Socket clientSocket) throws IOException {
         this.clientSocket = clientSocket;
-        writer = new PrintWriter(clientSocket.getOutputStream());
-        scanner=new Scanner(System.in);
+        writer = new OutputStreamWriter(clientSocket.getOutputStream());
+        scanner = new Scanner(System.in);
     }
 
     public void startSender() {
-        isOpen=true;
+        isOpen = true;
         try {
             System.out.println("StartSender wait message from console");
-                while (scanner.hasNextLine()) {
-
-                    String message = scanner.nextLine()+"\n";
-                    System.out.println("sender get message- "+message);
-                  //  writer.write(message);
-                    //writer.close();
-                    try {
-                        OutputStream out=clientSocket.getOutputStream();
-                        out.write(message.getBytes());
-                        out.flush();
-                    }catch(IOException e){
-
-                    }
-                    if (message.equalsIgnoreCase("disconnect")) {
-                        System.out.println("exit sender disconnect");
-                        break;
-                    }
+            while (scanner.hasNextLine()) {
+                System.out.println("sender next line ");
+                String message = scanner.nextLine() + "\n";
+                System.out.println("sender get message- " + message);
+                try {
+                    writer.write(message);
+                    writer.flush();
+                    System.out.println("Sender write message");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    break;
                 }
 
+                if (message.equalsIgnoreCase("disconnect" + "\n")) {
+                    System.out.println("exit sender disconnect");
+                    break;
+                }
+            }
         } finally {
-          closeSender();
+            if (this.isOpen()) {
+                closeSender();
+            }
         }
     }
-    public boolean isOpen(){
+
+    public boolean isOpen() {
         return isOpen;
     }
-    public void closeSender(){
+
+    public void closeSender() {
         System.out.println("closeSender");
-        writer.close();
+        isOpen = false;
         scanner.close();
-        isOpen=false;
-
-
+        try {
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -2,10 +2,12 @@ package ru.assignment.net;
 
 import ru.assignment.model.ChatModel;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -35,11 +37,14 @@ public class ServerClass implements Runnable {
                     System.out.println("afterServerClassaccept completed");
                     startNewSession(socket, chatModel);
                 }
+                System.out.println("before close connection after while run() ServerClass");
                 checkConnections();
             } catch (IOException e) {
+                System.out.println("before close connection after exception run() ServerClass");
                 checkConnections();
             }
         } catch (IOException a) {
+            System.out.println("exception port ServerClass");
             closeThread();
             a.printStackTrace();
         }
@@ -76,7 +81,10 @@ public class ServerClass implements Runnable {
 
     public void clearConnections() {
         System.out.println("clear All sessions ServerClass");
-        for (Session session : sessionSet) {
+        Iterator<Session> iterator=sessionSet.iterator();
+        while (iterator.hasNext()){
+            Session session=iterator.next();
+            iterator.remove();
             session.closeSession();
         }
     }
@@ -85,6 +93,7 @@ public class ServerClass implements Runnable {
         try {
             System.out.println("ServerClass close serversocket");
             serverSocket.close();
+            System.out.println("close serverSocket from ServerClass");
         } catch (IOException e) {
             e.printStackTrace();
         }

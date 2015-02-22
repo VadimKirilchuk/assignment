@@ -4,9 +4,7 @@ import ru.assignment.message.ChatMessage;
 import ru.assignment.model.ChatModel;
 import ru.assignment.model.ChatModelListener;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
@@ -31,8 +29,21 @@ public class Session implements Runnable, ChatModelListener {
         closeSession();
     }
 
+    public void initConfiguration() throws IOException {
+        try {
+            scanner = new Scanner(socket.getInputStream());
+            writer = new PrintWriter(socket.getOutputStream());
+        } catch (IOException e) {
+            closeSocket();
+            throw e;
+        }
+        chatModel.addListener(this);
+    }
+
     public void closeSession() {
+
         System.out.println("closeSession from Session");
+
         chatModel.removeListener(sessionIdentifier);
         scanner.close();
         writer.close();
@@ -56,20 +67,12 @@ public class Session implements Runnable, ChatModelListener {
         chatModel.addMessage(chatMessage, this);
     }
 
-    public void initConfiguration() throws IOException {
-        try {
-            scanner = new Scanner(socket.getInputStream());
-            writer = new PrintWriter(socket.getOutputStream());
-        } catch (IOException e) {
-            closeSocket();
-            throw e;
-        }
-        chatModel.addListener(this);
-    }
+
 
     // public void setListenerForChatModel(OutputStream outputStream){
 
     public void listen() {
+        getLastMessages();
         System.out.println("startListenSession wait message");
       /*
         byte[] byt=new byte[16];
@@ -85,7 +88,7 @@ public class Session implements Runnable, ChatModelListener {
         //System.out.println(scanner.nextLine());
         while (scanner.hasNextLine()) {
             String message = scanner.nextLine();
-            System.out.println("ListenSession get message -"+message);
+            System.out.println("ListenSession get message -" + message);
             if (message.equalsIgnoreCase("disconnect")) {
                 break;
             }
@@ -94,17 +97,25 @@ public class Session implements Runnable, ChatModelListener {
         }
     }
 
+    public void getLastMessages() {
+        chatModel.sendAllMessagesToNewListener(this);
+    }
+
     public void sendMessageToClient(ChatMessage chatMessage) {
-        String message = chatMessage.getMessage()+"\n";
+        String message = chatMessage.getMessage() + "\n";
         System.out.println("Session send message to client from chat model");
         //System.out.println(message);
         //System.out.println(writer);
-        //writer.write(message);
+        writer.write(message);
+        writer.flush();
+        /*
         try {
-            OutputStream out=socket.getOutputStream();
+            OutputStream out = socket.getOutputStream();
             out.write(message.getBytes());
             out.flush();
-        }catch(IOException e){}
+        } catch (IOException e) {
+        }
+        */
     }
 
     @Override

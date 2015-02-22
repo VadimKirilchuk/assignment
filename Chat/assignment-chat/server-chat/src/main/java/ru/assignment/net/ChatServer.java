@@ -43,6 +43,7 @@ public class ChatServer {
                 }
             }
             if (serverSessionThread.isAlive()) {
+                System.out.println("if serversession isAlive");
                 shutDown(serverSessionThread);
             }
         }
@@ -51,8 +52,10 @@ public class ChatServer {
     public void shutDown(Thread serverSessionThread) {
         System.out.println("close ServerClass thread");
         serverClass.closeThread();
+        System.out.println("closed thread");
         try {
             serverSessionThread.join();
+            System.out.println("join finished");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
