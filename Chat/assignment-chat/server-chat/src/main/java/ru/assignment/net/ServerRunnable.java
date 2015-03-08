@@ -2,10 +2,10 @@ package ru.assignment.net;
 
 import ru.assignment.model.ChatModel;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -13,14 +13,15 @@ import java.util.Set;
 /**
  * Created by Андрей on 18.02.2015.
  */
-public class ServerClass implements Runnable {
+public class ServerRunnable implements Runnable {
     private final int port;
     private ChatModel chatModel;
     private ServerSocket serverSocket;
     private Set<Session> sessionSet;
     private int sessionCount;
+    private boolean isClosed = false;
 
-    public ServerClass(int port, ChatModel chatModel) {
+    public ServerRunnable(int port, ChatModel chatModel) {
         this.port = port;
         this.chatModel = chatModel;
         sessionSet = new HashSet<Session>();
@@ -29,44 +30,52 @@ public class ServerClass implements Runnable {
     public void run() {
         try {
             serverSocket = new ServerSocket(port);
-            try {
-                System.out.println("beforeServerClassrun");
-                while (!serverSocket.isClosed()) {
-                    System.out.println("beforeServerClassaccept");
+            serverSocket.setSoTimeout(10);
+            while (!isClosed) {
+                try {
                     Socket socket = serverSocket.accept();
-                    System.out.println("afterServerClassaccept completed");
                     startNewSession(socket, chatModel);
+                } catch (SocketTimeoutException e) {
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    break;
                 }
-                System.out.println("before close connection after while run() ServerClass");
-                checkConnections();
-            } catch (IOException e) {
-                System.out.println("before close connection after exception run() ServerClass");
-                checkConnections();
             }
+            System.out.println("close serverRunnable");
+            checkConnections();
+            shutDown();
         } catch (IOException a) {
-            System.out.println("exception port ServerClass");
-            closeThread();
+            System.out.println("close serverRunnable exception");
+            shutDown();
             a.printStackTrace();
         }
     }
 
+    /*
+    *
+    *  try {
+
+                while (!serverSocket.isClosed()) {
+
+                    Socket socket = serverSocket.accept();
+
+                    startNewSession(socket, chatModel);
+                }
+
+                checkConnections();
+            } catch (IOException e) {
+
+                checkConnections();
+            }
+    *
+    *
+    * */
     public void startNewSession(Socket socket,
                                 ChatModel chatModel) {
-        Session session = null;
-        try {
-            System.out.println("session count for new listeners " + sessionCount);
-            session = new Session(socket, sessionCount, chatModel);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-
+        Session session = new Session(socket, sessionCount, chatModel);
         sessionSet.add(session);
-        //System.out.println("start session");
-        Thread sessionThread = new Thread(session);
-        System.out.println("beforestartSession");
-        sessionThread.start();
-
+        session.startAsync();
         sessionCount++;
     }
 
@@ -81,15 +90,25 @@ public class ServerClass implements Runnable {
 
     public void clearConnections() {
         System.out.println("clear All sessions ServerClass");
-        Iterator<Session> iterator=sessionSet.iterator();
-        while (iterator.hasNext()){
-            Session session=iterator.next();
+        Iterator<Session> iterator = sessionSet.iterator();
+        System.out.println(sessionSet.size());
+        while (iterator.hasNext()) {
+            Session session = iterator.next();
             iterator.remove();
-            session.closeSession();
+            System.out.println("close session////");
+            session.shutDown();
         }
     }
 
-    public void closeThread() {
+    public void close() {
+        isClosed = true;
+    }
+
+    public boolean isClosed(){
+        return isClosed;
+    }
+
+    public void shutDown() {
         try {
             System.out.println("ServerClass close serversocket");
             serverSocket.close();

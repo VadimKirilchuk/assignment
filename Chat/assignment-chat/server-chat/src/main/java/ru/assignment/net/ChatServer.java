@@ -5,9 +5,9 @@ import ru.assignment.model.ChatModel;
 import java.util.Scanner;
 
 public class ChatServer {
-    private ServerClass serverClass;
-    private ChatModel chatModel;
-    private ServerConfiguration serverConfiguration;
+    private ServerRunnable serverRunnable;
+    private final ChatModel chatModel;
+    private final ServerConfiguration serverConfiguration;
 
     public static void main(String[] args) {
         ServerConfiguration serverConfiguration = new ServerConfiguration(8185);
@@ -24,8 +24,8 @@ public class ChatServer {
     public void start() {
         System.out.println("startServer");
         int port=serverConfiguration.getPort();
-        serverClass = new ServerClass(port,chatModel);
-        Thread serverSessionThread = new Thread(serverClass);
+        serverRunnable = new ServerRunnable(port,chatModel);
+        Thread serverSessionThread = new Thread(serverRunnable);
         serverSessionThread.start();
         waitForCommand(serverSessionThread);
     }
@@ -36,28 +36,22 @@ public class ChatServer {
             while (scanner.hasNextLine()) {
                 String consoleCommand = scanner.nextLine();
                 if (consoleCommand.equalsIgnoreCase("quit")) {
-                    shutDown(serverSessionThread);
+                    shutDown();
                     break;
                 } else {
                     System.out.println("Wrong command,try again/for close  please enter <quit>");
                 }
             }
-            if (serverSessionThread.isAlive()) {
-                System.out.println("if serversession isAlive");
-                shutDown(serverSessionThread);
+            if (serverRunnable.isClosed()) {
+
+                shutDown();
             }
         }
     }
 
-    public void shutDown(Thread serverSessionThread) {
+    public void shutDown() {
         System.out.println("close ServerClass thread");
-        serverClass.closeThread();
-        System.out.println("closed thread");
-        try {
-            serverSessionThread.join();
-            System.out.println("join finished");
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        serverRunnable.close();
+
     }
 }

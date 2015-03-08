@@ -1,7 +1,9 @@
 package ru.assignment.model;
 
 import ru.assignment.message.ChatMessage;
+import ru.assignment.net.Session;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -11,8 +13,8 @@ import java.util.Set;
  * Created by Андрей on 18.02.2015.
  */
 public class ChatModel {
-    private Set<ChatModelListener> listenerSet;
-    private List<ChatMessage> messageList;
+    private final Set<ChatModelListener> listenerSet;
+    private final List<ChatMessage> messageList;
 
     public ChatModel() {
         listenerSet = new HashSet<ChatModelListener>();
@@ -33,18 +35,16 @@ public class ChatModel {
         System.out.println("model set sum "+listenerSet.size());
     }
 
-    public void removeListener(int identifier) {
+    public void removeListener(Session listener) {
         System.out.println("remove Session from ChatModel");
-        listenerSet.remove(identifier);
+        listenerSet.remove(listener);
     }
 
-    public void sendAllMessagesToNewListener(ChatModelListener listener) {
+    public List<ChatMessage> getLastMessages() {
         System.out.println("send All messages to New Listener from ChatModel");
         int size = messageList.size();
         int startIndex = (Math.min(size, 30) == 30 ? (size - 30) : 0);
-        for (int i = startIndex; i < size; i++) {
-            listener.sendMessageToClient(messageList.get(i));
-        }
+        return messageList.subList(startIndex,size);
     }
 
     public void sendMessageToAllListeners(ChatMessage chatMessage,
@@ -53,7 +53,10 @@ public class ChatModel {
         for (ChatModelListener listener : listenerSet){
             System.out.println(listener.hashCode()+" listener hashcode");
             if (!listener.equals(chatModelListener)) {
-                listener.sendMessageToClient(chatMessage);
+
+
+                    listener.onNewMessage(chatMessage);
+
             }
         }
     }

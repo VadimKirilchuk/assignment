@@ -1,13 +1,10 @@
 package ru.assignment.net;
 
-
-
 import java.io.IOException;
 import java.net.Socket;
 
-
-public class ChatClient {
-    private ClientConfiguration clientConfiguration;
+public class ChatClient implements DisconnectReceivedListener {
+    private final ClientConfiguration clientConfiguration;
     private Sender sender;
     private Receiver receiver;
     private Socket clientSocket;
@@ -24,44 +21,42 @@ public class ChatClient {
 
     public void startClient() {
         try {
-            initConfiguration();
+            init();
+            System.out.println("beforestartSession");
+            startSession();
+            System.out.println("beforefinishSession");
+            finishSession();
         } catch (IOException e) {
             e.printStackTrace();
-            return;
         }
-        System.out.println("beforestartSession");
-        startSession();
-        System.out.println("beforefinishSession");
-        finishSession();
-
     }
 
-    public void initConfiguration() throws IOException {
+    public void init() throws IOException {
         int serverPort = clientConfiguration.getServerPort();
         String serverHost = clientConfiguration.getServerHost();
         clientSocket = new Socket(serverHost, serverPort);
-        sender = new Sender(clientSocket);
-        receiver = new Receiver(clientSocket, sender);
+        sender = new Sender(clientSocket, this);
+        receiver = new Receiver(clientSocket, this);
     }
 
     public void startSession() {
         System.out.println("startSession");
-        Thread receiverThread = new Thread(receiver);
-        receiverThread.start();
-        sender.startSender();
-
+        receiver.connectAsync();
+        sender.connect();
     }
 
+    public void finishSession() throws IOException {
+        System.out.println("finishSession");
+        clientSocket.close();
+    }
 
-
-    public void finishSession() {
-        try {
-            System.out.println("finishSession");
-            clientSocket.close();
-        }catch (IOException e){
-            e.printStackTrace();
+    @Override
+    public void disconnectReceived() {
+        if (sender.isOpen()) {
+            receiver.disconnect();
+        }
+        if (sender.isOpen()) {
+            sender.disconnect();
         }
     }
-
-
 }
