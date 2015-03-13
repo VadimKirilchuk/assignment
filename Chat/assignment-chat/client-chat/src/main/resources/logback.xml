@@ -15,15 +15,18 @@
   <file>${user.home}/logs/clientLog.log</file>
   
   <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-  <fileNamePattern>${user.home}/logs/clientLog%i.log</fileNamePattern>
+  <fileNamePattern>${user.home}/logs/clientLog.%i.log</fileNamePattern>
   <minIndex>1</minIndex>
   <maxIndex>3</maxIndex>
   </rollingPolicy>
   
-  <triggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+
+  
+  <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
   <maxFileSize>1MB</maxFileSize>
   </triggeringPolicy>
   
+
   <encoder>
       <pattern>%d [%thread] %-5level %logger{36}  %method{36}- %msg%n</pattern>
     </encoder>
