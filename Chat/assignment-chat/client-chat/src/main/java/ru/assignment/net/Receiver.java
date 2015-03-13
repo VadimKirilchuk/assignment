@@ -19,6 +19,7 @@ public class Receiver implements Runnable {
 
 
     public Receiver(Socket clientSocket, DisconnectReceivedListener listener) throws IOException {
+        ChatClient.clientLogger.debug("Configuration receiver constructor");
         this.listener = listener;
         this.clientSocket = clientSocket;
         streamReader = new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_16);
@@ -26,14 +27,14 @@ public class Receiver implements Runnable {
     }
 
     public void connectAsync() {
+        ChatClient.clientLogger.debug("Start new receiver thread");
         Thread receiverThread = new Thread(this);
         receiverThread.start();
     }
 
     public void run() {
-        System.out.println("run receiver");
+        ChatClient.clientLogger.debug("Receiver run");
         currentThread = Thread.currentThread();
-
         connect();
     }
 
@@ -58,48 +59,54 @@ public class Receiver implements Runnable {
             disconnect();
         }
 */
+
         isOpen = true;
+        ChatClient.clientLogger.debug("Start waiting messages from server, receiver isOpen -{}",isOpen);
         while (isOpen) {
 
             try {
                 if (!reader.ready()) {
+
                     try {
 
                         Thread.sleep(10);
                     } catch (InterruptedException e) {
+                        ChatClient.clientLogger.debug("Interrupt receiver at sleep operation");
                         break;
                     }
                 } else {
-                    System.out.println("ReadLine");
+                    ChatClient.clientLogger.debug("Receiver is ready to get data");
                     String message = reader.readLine();
                     System.out.println(message);
+                    ChatClient.clientLogger.debug("Receiver get data from server: {}",message);
                     if (message.equals("disconnect")) {
                         isOpen = false;
                     }
                 }
             } catch (IOException e) {
-                System.out.println("exception");
-                e.printStackTrace();
+                ChatClient.clientLogger.debug("Receiver exception- {}",e);
                 isOpen = false;
             }
         }
         close();
         listener.disconnectReceived();
     }
-
+public boolean isOpen(){
+    return isOpen;
+}
     public void disconnect() {
+        ChatClient.clientLogger.debug("Disconnect receiver");
         currentThread.interrupt();
-        System.out.println("disconnect receiver");
         isOpen = false;
     }
 
     public void close() {
-        System.out.println("close receiver");
+        ChatClient.clientLogger.debug("Close receiver");
         try {
 
             reader.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            ChatClient.clientLogger.debug("Receiver reader close exception- {}",e);
         }
     }
 }

@@ -42,7 +42,7 @@ public class ChatServer {
                     System.out.println("Wrong command,try again/for close  please enter <quit>");
                 }
             }
-            if (serverRunnable.isClosed()) {
+            if (!serverRunnable.isClosed()) {
 
                 shutDown();
             }

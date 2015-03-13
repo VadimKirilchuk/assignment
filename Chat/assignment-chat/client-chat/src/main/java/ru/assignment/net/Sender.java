@@ -18,6 +18,7 @@ public class Sender {
     private Thread currentThread;
 
     public Sender(Socket clientSocket, DisconnectReceivedListener listener) throws IOException {
+        ChatClient.clientLogger.debug("Configuration sender constructor ");
         this.listener=listener;
         this.clientSocket = clientSocket;
         writer = new OutputStreamWriter(clientSocket.getOutputStream(), StandardCharsets.UTF_16);
@@ -27,6 +28,7 @@ public class Sender {
     private void sendMessageToServer() throws IOException {
         if (scanner.hasNextLine()) {
             String message = scanner.nextLine() + "\n";
+            ChatClient.clientLogger.debug("Sender send message to server, message: {}",message);
             writer.write(message);
             writer.flush();
             if (message.equalsIgnoreCase("close" + "\n")) {
@@ -50,19 +52,24 @@ public class Sender {
      *  After all closing manipulations we should go back and check that receiver and sender were closed.
      */
     public void connect() {
+
         isOpen = true;
+        ChatClient.clientLogger.debug("Sender waiting message from user, sender isOpen- {}",isOpen);
         while (isOpen) {
             try {
                 if (System.in.available() == 0) {
+
                     try {
                         Thread.sleep(10);
                     } catch (InterruptedException a) {
+                        ChatClient.clientLogger.debug("Interrupt sender at sleep operation");
                         break;
                     }
                 } else {
                     sendMessageToServer();
                 }
             } catch (IOException e) {
+                ChatClient.clientLogger.debug("Sender exception -{}",e);
                 isOpen = false;
             }
         }
@@ -105,17 +112,18 @@ public class Sender {
     }
 
     public void disconnect() {
+        ChatClient.clientLogger.debug("Sender disconnect");
         currentThread.interrupt();
         isOpen = false;
     }
 
     private void close() {
-        System.out.println("close");
+        ChatClient.clientLogger.debug("Close sender");
         scanner.close();
         try {
             writer.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            ChatClient.clientLogger.debug("Sender's writer close exception - {}",e);
         }
     }
 }
