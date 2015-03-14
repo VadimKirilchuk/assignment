@@ -1,5 +1,7 @@
 package ru.assignment.model;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.assignment.message.ChatMessage;
 import ru.assignment.net.Session;
 
@@ -15,33 +17,34 @@ import java.util.Set;
 public class ChatModel {
     private final Set<ChatModelListener> listenerSet;
     private final List<ChatMessage> messageList;
+    private static final Logger LOG = LoggerFactory.getLogger(ChatModel.class);
 
     public ChatModel() {
+        LOG.trace("Configuration ChatModel constructor");
         listenerSet = new HashSet<ChatModelListener>();
         messageList = new ArrayList<ChatMessage>();
     }
 
     public void addMessage(ChatMessage chatMessage,
                            ChatModelListener chatModelListener) {
-        //messageSizeList++;
-        System.out.println("add messagetoChatModel");
+        LOG.trace("Add message to ChatModel");
         messageList.add(chatMessage);
         sendMessageToAllListeners(chatMessage, chatModelListener);
     }
 
     public void addListener(ChatModelListener listener) {
-        System.out.println("ChatModel add new listener");
+        LOG.trace("Add listener to ChatModel");
         listenerSet.add(listener);
-        System.out.println("model set sum "+listenerSet.size());
+
     }
 
     public void removeListener(Session listener) {
-        System.out.println("remove Session from ChatModel");
+        LOG.trace("Remove listener from ChatModel");
         listenerSet.remove(listener);
     }
 
     public List<ChatMessage> getLastMessages() {
-        System.out.println("send All messages to New Listener from ChatModel");
+        LOG.trace("Receive message from ChatModel");
         int size = messageList.size();
         int startIndex = (Math.min(size, 30) == 30 ? (size - 30) : 0);
         return messageList.subList(startIndex,size);
@@ -49,12 +52,9 @@ public class ChatModel {
 
     public void sendMessageToAllListeners(ChatMessage chatMessage,
                                           ChatModelListener chatModelListener) {
-        System.out.println("ChatModel send message to All "+"listenerset size-"+listenerSet.size());
+        LOG.trace("Send message to All listeners");
         for (ChatModelListener listener : listenerSet){
-            System.out.println(listener.hashCode()+" listener hashcode");
             if (!listener.equals(chatModelListener)) {
-
-
                     listener.onNewMessage(chatMessage);
 
             }

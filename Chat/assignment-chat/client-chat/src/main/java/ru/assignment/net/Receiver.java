@@ -1,5 +1,8 @@
 package ru.assignment.net;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,13 +16,14 @@ public class Receiver implements Runnable {
     private final Socket clientSocket;
     private final BufferedReader reader;
     private final InputStreamReader streamReader;
-    private final DisconnectReceivedListener listener;
+    private final DisconnectDataListener listener;
     private volatile boolean isOpen = false;
     private Thread currentThread;
+    private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
 
 
-    public Receiver(Socket clientSocket, DisconnectReceivedListener listener) throws IOException {
-        ChatClient.clientLogger.debug("Configuration receiver constructor");
+    public Receiver(Socket clientSocket, DisconnectDataListener listener) throws IOException {
+    LOG.trace("Configuration receiver constructor");
         this.listener = listener;
         this.clientSocket = clientSocket;
         streamReader = new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_16);
@@ -27,13 +31,13 @@ public class Receiver implements Runnable {
     }
 
     public void connectAsync() {
-        ChatClient.clientLogger.debug("Start new receiver thread");
+        LOG.trace("Start new receiver thread");
         Thread receiverThread = new Thread(this);
         receiverThread.start();
     }
 
     public void run() {
-        ChatClient.clientLogger.debug("Receiver run");
+        LOG.debug("Receiver run");
         currentThread = Thread.currentThread();
         connect();
     }
@@ -45,23 +49,9 @@ public class Receiver implements Runnable {
      * After we get data to our input stream we should read string and send  string to console.
      */
     public void connect() {
-        /*
-        try {
-            System.out.println("receiver wait message");
-            while (reader.hasNextLine()) {
-
-                String message = reader.nextLine();
-                System.out.println("get message to receiver " + message);
-                System.out.println(message);
-            }
-        } finally {
-            System.out.println("finally connect");
-            disconnect();
-        }
-*/
 
         isOpen = true;
-        ChatClient.clientLogger.debug("Start waiting messages from server, receiver isOpen -{}",isOpen);
+        LOG.trace("Start waiting messages from server, receiver isOpen= {}", isOpen);
         while (isOpen) {
 
             try {
@@ -71,42 +61,43 @@ public class Receiver implements Runnable {
 
                         Thread.sleep(10);
                     } catch (InterruptedException e) {
-                        ChatClient.clientLogger.debug("Interrupt receiver at sleep operation");
+                        LOG.trace("Interrupt receiver at sleep operation");
                         break;
                     }
                 } else {
-                    ChatClient.clientLogger.debug("Receiver is ready to get data");
+                    LOG.trace("Receiver is ready to get data");
                     String message = reader.readLine();
                     System.out.println(message);
-                    ChatClient.clientLogger.debug("Receiver get data from server: {}",message);
+                    LOG.info("Receiver get data from server: {}", message);
                     if (message.equals("disconnect")) {
                         isOpen = false;
                     }
                 }
             } catch (IOException e) {
-                ChatClient.clientLogger.debug("Receiver exception- {}",e);
+                LOG.error("Receiver exception ", e);
                 isOpen = false;
             }
         }
         close();
-        listener.disconnectReceived();
+        listener.finishDataOperation();
     }
 public boolean isOpen(){
     return isOpen;
 }
+
     public void disconnect() {
-        ChatClient.clientLogger.debug("Disconnect receiver");
+        LOG.trace("Disconnect receiver");
         currentThread.interrupt();
         isOpen = false;
     }
 
     public void close() {
-        ChatClient.clientLogger.debug("Close receiver");
+        LOG.trace("Close receiver");
         try {
 
             reader.close();
         } catch (IOException e) {
-            ChatClient.clientLogger.debug("Receiver reader close exception- {}",e);
+            LOG.error("Receiver reader close exception",e);
         }
     }
 }

@@ -1,5 +1,7 @@
 package ru.assignment.net;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.assignment.model.ChatModel;
 
 import java.io.IOException;
@@ -20,8 +22,10 @@ public class ServerRunnable implements Runnable {
     private Set<Session> sessionSet;
     private int sessionCount;
     private boolean isClosed = false;
+    private static final Logger LOG = LoggerFactory.getLogger(ServerRunnable.class);
 
     public ServerRunnable(int port, ChatModel chatModel) {
+        LOG.trace("Configuration ServerRunnable constructor, port= {}",port);
         this.port = port;
         this.chatModel = chatModel;
         sessionSet = new HashSet<Session>();
@@ -29,50 +33,35 @@ public class ServerRunnable implements Runnable {
 
     public void run() {
         try {
+            LOG.debug("Run serverRunnable");
             serverSocket = new ServerSocket(port);
             serverSocket.setSoTimeout(10);
             while (!isClosed) {
                 try {
                     Socket socket = serverSocket.accept();
+                    LOG.trace("Accept connection");
                     startNewSession(socket, chatModel);
                 } catch (SocketTimeoutException e) {
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOG.error("ServerRunnable accept exception", e);
                     break;
                 }
             }
-            System.out.println("close serverRunnable");
+
             checkConnections();
             shutDown();
         } catch (IOException a) {
-            System.out.println("close serverRunnable exception");
+            LOG.error("ServerRunnable server soccet exception", a);
             shutDown();
-            a.printStackTrace();
+
         }
     }
 
-    /*
-    *
-    *  try {
 
-                while (!serverSocket.isClosed()) {
-
-                    Socket socket = serverSocket.accept();
-
-                    startNewSession(socket, chatModel);
-                }
-
-                checkConnections();
-            } catch (IOException e) {
-
-                checkConnections();
-            }
-    *
-    *
-    * */
     public void startNewSession(Socket socket,
                                 ChatModel chatModel) {
+        LOG.trace("Start new Session number= {}", sessionCount);
         Session session = new Session(socket, sessionCount, chatModel);
         sessionSet.add(session);
         session.startAsync();
@@ -80,7 +69,8 @@ public class ServerRunnable implements Runnable {
     }
 
     public void checkConnections() {
-        System.out.println("ServerClass check connection");
+
+        LOG.trace("ServerRunnable check connection");
         if (!sessionSet.isEmpty()) {
             clearConnections();
         } else {
@@ -89,18 +79,18 @@ public class ServerRunnable implements Runnable {
     }
 
     public void clearConnections() {
-        System.out.println("clear All sessions ServerClass");
+        LOG.trace("Clear all connections");
         Iterator<Session> iterator = sessionSet.iterator();
         System.out.println(sessionSet.size());
         while (iterator.hasNext()) {
             Session session = iterator.next();
             iterator.remove();
-            System.out.println("close session////");
             session.shutDown();
         }
     }
 
     public void close() {
+        LOG.trace("Close ServerRunnable , isClosed= {}",isClosed);
         isClosed = true;
     }
 
@@ -110,11 +100,11 @@ public class ServerRunnable implements Runnable {
 
     public void shutDown() {
         try {
-            System.out.println("ServerClass close serversocket");
+            LOG.trace("ShutDown ServerRunnable");
             serverSocket.close();
-            System.out.println("close serverSocket from ServerClass");
+
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("ServerSocket close exception",e);
         }
     }
 }

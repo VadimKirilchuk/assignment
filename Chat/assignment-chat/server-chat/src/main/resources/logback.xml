@@ -12,10 +12,10 @@
   
   <appender name="clientAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
 
-  <file>${user.home}/logs/clientLogs//logfile.log</file>
+  <file>${user.home}/logs/serverLogs/logfile.log</file>
   
   <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
-  <fileNamePattern>${user.home}/logs/clientLogs/logfile.%i.log</fileNamePattern>
+  <fileNamePattern>${user.home}/logs/serverLogs/logfile.%i.log</fileNamePattern>
   <minIndex>1</minIndex>
   <maxIndex>3</maxIndex>
   </rollingPolicy>

@@ -1,5 +1,8 @@
 package ru.assignment.net;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
@@ -14,11 +17,12 @@ public class Sender {
     private final OutputStreamWriter writer;
     private final Scanner scanner;
     private volatile boolean  isOpen = false;
-    private final DisconnectReceivedListener listener;
+    private final DisconnectDataListener listener;
     private Thread currentThread;
+    private static final Logger LOG = LoggerFactory.getLogger(Sender.class);
 
-    public Sender(Socket clientSocket, DisconnectReceivedListener listener) throws IOException {
-        ChatClient.clientLogger.debug("Configuration sender constructor ");
+    public Sender(Socket clientSocket, DisconnectDataListener listener) throws IOException {
+        LOG.trace("Configuration sender constructor ");
         this.listener=listener;
         this.clientSocket = clientSocket;
         writer = new OutputStreamWriter(clientSocket.getOutputStream(), StandardCharsets.UTF_16);
@@ -28,7 +32,7 @@ public class Sender {
     private void sendMessageToServer() throws IOException {
         if (scanner.hasNextLine()) {
             String message = scanner.nextLine() + "\n";
-            ChatClient.clientLogger.debug("Sender send message to server, message: {}",message);
+            LOG.info("Sender send message to server, message: {}", message);
             writer.write(message);
             writer.flush();
             if (message.equalsIgnoreCase("close" + "\n")) {
@@ -54,7 +58,7 @@ public class Sender {
     public void connect() {
 
         isOpen = true;
-        ChatClient.clientLogger.debug("Sender waiting message from user, sender isOpen- {}",isOpen);
+        LOG.debug("Sender waiting message from user, sender isOpen= {}", isOpen);
         while (isOpen) {
             try {
                 if (System.in.available() == 0) {
@@ -62,47 +66,19 @@ public class Sender {
                     try {
                         Thread.sleep(10);
                     } catch (InterruptedException a) {
-                        ChatClient.clientLogger.debug("Interrupt sender at sleep operation");
+                        LOG.trace("Interrupt sender at sleep operation");
                         break;
                     }
                 } else {
                     sendMessageToServer();
                 }
             } catch (IOException e) {
-                ChatClient.clientLogger.debug("Sender exception -{}",e);
+                LOG.error("Sender exception", e);
                 isOpen = false;
             }
         }
         close();
-        listener.disconnectReceived();
-        /*
-        try {
-            System.out.println("StartSender wait message from console");
-            while (scanner.hasNextLine()) {
-                System.out.println("sender next line ");
-                String message = scanner.nextLine() + "\n";
-                System.out.println("sender get message- " + message);
-                try {
-                    writer.write(message);
-                    writer.flush();
-                    System.out.println("Sender write message");
-                } catch (IOException e) {
-                    System.out.println("exception");
-                    e.printStackTrace();
-                    break;
-                }
-
-                if (message.equalsIgnoreCase("close" + "\n")) {
-                    System.out.println("exit sender close");
-                    break;
-                }
-            }
-        } finally {
-            if (this.isOpen()) {
-                close();
-            }
-        }
-*/
+        listener.finishDataOperation();
     }
 
 
@@ -112,18 +88,18 @@ public class Sender {
     }
 
     public void disconnect() {
-        ChatClient.clientLogger.debug("Sender disconnect");
+        LOG.trace("Sender disconnect");
         currentThread.interrupt();
         isOpen = false;
     }
 
     private void close() {
-        ChatClient.clientLogger.debug("Close sender");
+        LOG.trace("Close sender");
         scanner.close();
         try {
             writer.close();
         } catch (IOException e) {
-            ChatClient.clientLogger.debug("Sender's writer close exception - {}",e);
+            LOG.error("Sender's writer close exception",e);
         }
     }
 }
