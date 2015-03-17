@@ -1,19 +1,18 @@
 package exercises;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.status.StatusManager;
-import ch.qos.logback.core.util.StatusPrinter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import exercises.interviewTasks.tsystems.DuplicateFinder.DuplicateFinderImpl;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
+import java.text.Collator;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Scanner;
-
+import java.util.TreeMap;
 
 /**
  * Created by Андрей on 07.02.2015.
@@ -23,11 +22,8 @@ public class BaseSocket {
 
     public static void main(String[] args) throws IOException {
 
-Logger log=LoggerFactory.getLogger("ROOT");
-
-        log.debug("test");
-
-
+        DuplicateFinderImpl f=new DuplicateFinderImpl();
+       System.out.println( f.process(new File("e:\\firstfile.txt"),new File("e:\\secondfile.txt")));
 
 
 
@@ -200,14 +196,10 @@ javac Main.java
 interface Z<E> {
 }
 
-class AA<E> implements Z<E> {
-    int val;
-
-    AA() {
-
-    }
-
-    public AA dow() {
-        return this;
-    }
+class AA implements Comparator<Integer> {
+  public int  compare(Integer a,Integer b){
+      if (a==null&b==null)
+        return 1;
+      else return -1;
+        }
 }
