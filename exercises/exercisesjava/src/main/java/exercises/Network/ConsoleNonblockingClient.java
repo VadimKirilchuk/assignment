@@ -3,7 +3,7 @@
  * We carefully take bytes from the specific file and then send data to server.
  */
 
-package exercises;
+package exercises.Network;
 
 import java.io.FileInputStream;
 import java.io.IOException;

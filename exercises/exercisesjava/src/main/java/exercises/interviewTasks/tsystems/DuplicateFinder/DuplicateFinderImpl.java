@@ -3,21 +3,20 @@ package exercises.interviewTasks.tsystems.DuplicateFinder;
 import java.io.*;
 import java.util.Map;
 import java.util.TreeMap;
-/**
- *Description of this task is quite massive so i have loaded it to googl drive
- *
- */
 
+/**
+ * Description of this task is quite massive so i have loaded it to googl drive
+ */
 public class DuplicateFinderImpl implements DuplicateFinder {
-    public static void main(String [] args) {
+    public static void main(String[] args) {
         DuplicateFinderImpl testObject = new DuplicateFinderImpl();
         System.out.println(testObject.process(new File("e:\\firstfile.txt"), new File("e:\\secondfile.txt")));
     }
+
     public DuplicateFinderImpl() {
     }
 
     public boolean process(File sourceFile, File targetFile) {
-
         Map<String, Integer> map = new TreeMap<String, Integer>();
         try {
             putDataToMap(map, sourceFile);
@@ -31,15 +30,19 @@ public class DuplicateFinderImpl implements DuplicateFinder {
 
     private void putDataToMap(Map<String, Integer> map, File sourceFile)
             throws IOException {
-        BufferedReader reader = null;
-        Integer countObject;
-        String string;
+        //Integer countObject;
+        BufferedReader reader = new BufferedReader(new FileReader(sourceFile));
         try {
-            reader = new BufferedReader(new FileReader(sourceFile));
+            String string;
             while ((string = reader.readLine()) != null) {
-                countObject = map.put(string, new Integer(1));
+             /*   countObject = map.put(string,1);
                 if (countObject != null) {
                     map.put(string, ++countObject);
+                }*/
+                if (!map.containsKey(string)) {
+                    map.put(string, 1);
+                } else {
+                    map.put(string, map.get(string) + 1);
                 }
             }
         } finally {
@@ -48,12 +51,12 @@ public class DuplicateFinderImpl implements DuplicateFinder {
     }
 
     private void writeDataToFile(Map<String, Integer> map, File targetFile)
-            throws FileNotFoundException {
-        PrintWriter writer = null;
+            throws IOException {
+        String lineSeparator = System.getProperty("line.separator");
+        BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile, true));
         try {
-            writer = new PrintWriter(new FileOutputStream(targetFile, true));
             for (Map.Entry<String, Integer> entity : map.entrySet()) {
-                writer.println(entity.getKey() + "[" + entity.getValue() + "]");
+                writer.write(entity.getKey() + "[" + entity.getValue() + "]" + lineSeparator);
             }
         } finally {
             writer.close();

@@ -1,18 +1,11 @@
-package exercises;
-
-import exercises.interviewTasks.tsystems.DuplicateFinder.DuplicateFinderImpl;
+package exercises.Network;
 
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
-import java.text.Collator;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Scanner;
-import java.util.TreeMap;
 
 /**
  * Created by Андрей on 07.02.2015.
@@ -20,16 +13,14 @@ import java.util.TreeMap;
 public class BaseSocket {
     private int f;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
-        DuplicateFinderImpl f=new DuplicateFinderImpl();
-       System.out.println( f.process(new File("e:\\firstfile.txt"),new File("e:\\secondfile.txt")));
+    }
 
+    public static void show() throws IOException {
+        try (FileInputStream str = new FileInputStream("e:\\hhhds")) {
 
-
-
-
-
+        }
     }
 
     public BaseSocket() {
@@ -115,91 +106,5 @@ public class BaseSocket {
             }
         }
     }
-
-    public static void test(A obj) {
-        obj.show();
-    }
 }
 
-class A {
-    int s = 1;
-
-    public void show() {
-        System.out.println(s);
-    }
-}
-
-class B extends A {
-    int s = 2;
-
-    public void show() {
-        System.out.println(s);
-    }
-}
-
-/*
-public class Main {
-
-    public static void main(String args[])  {
-        Collection c = new HashSet();
-        Main et = new Main();
-        et.sort(coffee);
-        et.sort(new HashSet());
-    }
-
-    //overloaded method takes Collection argument
-    public Collection sort(Collection c){
-        System.out.println("Inside Collection sort method");
-        return c;
-    }
-
-
-    //another overloaded method which takes HashSet argument which is sub class
-    public Collection sort(HashSet hs){
-        System.out.println("Inside HashSet sort method");
-        return hs;
-    }
-
-}
-
-
-
-javac Main.java
-        [19:53:44] Vadim Kirilchuk: javap -verbose Main.class
-[19:54:01] Vadim Kirilchuk: public static void main(java.lang.String[]);
-        descriptor: ([Ljava/lang/String;)V
-        flags: ACC_PUBLIC, ACC_STATIC
-        Code:
-        stack=3, locals=3, args_size=1
-        0: new           #2                  // class java/util/HashSet
-        3: dup
-        4: invokespecial #3                  // Method java/util/HashSet."<init>":()V
-        7: astore_1
-        8: new           #4                  // class Main
-        11: dup
-        12: invokespecial #5                  // Method "<init>":()V
-        15: astore_2
-        16: aload_2
-        17: aload_1
-        18: invokevirtual #6                  // Method sort:(Ljava/util/Collection;)Ljava/util/Collection;
-        21: pop
-        22: aload_2
-        23: new           #2                  // class java/util/HashSet
-        26: dup
-        27: invokespecial #3                  // Method java/util/HashSet."<init>":()V
-        30: invokevirtual #7                  // Method sort:(Ljava/util/HashSet;)Ljava/util/Collection;
-        33: pop
-        34: return
-
-
-        */
-interface Z<E> {
-}
-
-class AA implements Comparator<Integer> {
-  public int  compare(Integer a,Integer b){
-      if (a==null&b==null)
-        return 1;
-      else return -1;
-        }
-}

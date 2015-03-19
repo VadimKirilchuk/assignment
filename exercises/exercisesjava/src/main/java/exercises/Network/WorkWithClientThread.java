@@ -1,4 +1,4 @@
-package exercises;
+package exercises.Network;
 
 import java.io.IOException;
 import java.io.InputStream;

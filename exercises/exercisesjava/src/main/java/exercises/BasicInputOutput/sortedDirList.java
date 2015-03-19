@@ -5,7 +5,7 @@
  * and the second produces the subset of the list that matches its argument
  */
 
-package exercises;
+package exercises.BasicInputOutput;
 
 import java.io.File;
 import java.io.FilenameFilter;

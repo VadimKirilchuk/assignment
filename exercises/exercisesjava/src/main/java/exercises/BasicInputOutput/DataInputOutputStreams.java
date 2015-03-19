@@ -1,4 +1,4 @@
-package exercises;
+package exercises.BasicInputOutput;
 
 import java.io.*;
 

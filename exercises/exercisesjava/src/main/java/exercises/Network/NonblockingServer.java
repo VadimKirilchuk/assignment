@@ -2,7 +2,7 @@
  *Non-blocking server-side
  */
 
-package exercises;
+package exercises.Network;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

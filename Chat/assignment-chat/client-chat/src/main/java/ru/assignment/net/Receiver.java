@@ -58,7 +58,6 @@ public class Receiver implements Runnable {
                 if (!reader.ready()) {
 
                     try {
-
                         Thread.sleep(10);
                     } catch (InterruptedException e) {
                         LOG.trace("Interrupt receiver at sleep operation");
