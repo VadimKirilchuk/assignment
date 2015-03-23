@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class Session implements Runnable, ChatModelListener {
+    private static final Logger LOG = LoggerFactory.getLogger(Session.class);
     private final Socket socket;
     private final int sessionIdentifier;
     private final ChatModel chatModel;
@@ -23,7 +24,7 @@ public class Session implements Runnable, ChatModelListener {
     private OutputStreamWriter writer;
     private boolean isActive = false;
     private Thread currentThread;
-    private static final Logger LOG = LoggerFactory.getLogger(Session.class);
+
 
     public Session(Socket socket, int sessionIdentifier,
                    ChatModel chatModel) {
@@ -114,7 +115,6 @@ public class Session implements Runnable, ChatModelListener {
             try {
                 if (!reader.ready()) {
                     try {
-
                         Thread.sleep(10);
                     } catch (InterruptedException e) {
                         break;

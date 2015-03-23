@@ -5,6 +5,8 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Scanner;
 
 /**
@@ -14,6 +16,15 @@ public class BaseSocket {
     private int f;
 
     public static void main(String[] args) {
+
+        File file= new File("\\jjj.txt" +
+                "");
+      //  System.out.println(file.renameTo(new File("e:\\mvn\\td\\h.txt")));
+        System.out.println(file.getAbsolutePath());
+        System.out.println(file.exists());
+if(file instanceof File);
+
+
 
     }
 

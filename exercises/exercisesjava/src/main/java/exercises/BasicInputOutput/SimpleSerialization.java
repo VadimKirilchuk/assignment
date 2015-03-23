@@ -44,6 +44,16 @@ Ag g=new Ag(111);
             System.out.println(" obj 1 " +g1.i);
             System.out.println(" obj 2 " +g2.i);
 
+            S obj=new S(1,2,3);
+            System.out.println("f "+obj.f+" h" +obj.h+" i" +obj.i);
+            ObjectOutputStream outputd = new ObjectOutputStream(
+                    new FileOutputStream("e:\\outputSSS.txt"));
+            output.writeObject(obj);
+            ObjectInputStream inputd = new ObjectInputStream(
+                    new FileInputStream("e:\\outputSSS.txt"));
+           S obj1=(S)input.readObject();
+            System.out.println("f "+obj1.f+" h " +obj1.h+" i" +obj1.i);
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -172,7 +182,10 @@ out.writeObject(ag);
 }
 
 class Ag implements Serializable{
-    int i;
+    int i=87;
+    Ag(){
+        i=5;
+    }
     public Ag(int d){
         i=d;
     }
@@ -180,3 +193,22 @@ class Ag implements Serializable{
         return "test"+ i;
     }
 }
+
+class Z extends Ag {
+    int h=1;
+    Z(){
+        h=95;
+    }
+}
+class S extends Z {
+    int f=5;
+///    int i=7;
+
+    S(int z, int d,int g){
+        h=71;
+       i=88;
+        f=115;
+    }
+
+}
+

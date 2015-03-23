@@ -7,9 +7,10 @@ import org.slf4j.LoggerFactory;
  * Created by Андрей on 20.02.2015.
  */
 public class ClientConfiguration {
+    private static final Logger LOG = LoggerFactory.getLogger(ClientConfiguration.class);
     private final String serverHost;
     private final int serverPort;
-    private static final Logger LOG = LoggerFactory.getLogger(ClientConfiguration.class);
+
 
     public ClientConfiguration(int serverPort, String serverHost) {
         LOG.trace("Constructor configuration: serverPort= {}, serverHost= {}",

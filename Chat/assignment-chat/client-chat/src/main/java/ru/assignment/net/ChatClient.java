@@ -8,11 +8,12 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class ChatClient implements DisconnectDataListener {
+    private static final Logger LOG =LoggerFactory.getLogger(ChatClient.class);
     private final ClientConfiguration clientConfiguration;
     private Sender sender;
     private Receiver receiver;
     private Socket clientSocket;
-    private static final Logger LOG =LoggerFactory.getLogger(ChatClient.class);
+
 
     public static void main(String[] ar) {
 

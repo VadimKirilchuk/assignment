@@ -52,11 +52,13 @@ public class DuplicateFinderImpl implements DuplicateFinder {
 
     private void writeDataToFile(Map<String, Integer> map, File targetFile)
             throws IOException {
-        String lineSeparator = System.getProperty("line.separator");
+         //  String lineSeparator = System.getProperty("line.separator");
+        // we use bufferedwriter rather printwriter because we must handle exceptions
         BufferedWriter writer = new BufferedWriter(new FileWriter(targetFile, true));
         try {
             for (Map.Entry<String, Integer> entity : map.entrySet()) {
-                writer.write(entity.getKey() + "[" + entity.getValue() + "]" + lineSeparator);
+                writer.write(entity.getKey() + "[" + entity.getValue() + "]");
+                writer.newLine();
             }
         } finally {
             writer.close();

@@ -22,6 +22,12 @@
       <scope>test</scope>
     </dependency>
 	<dependency>
+			<groupId>pl.pragmatists</groupId>
+			<artifactId>JUnitParams</artifactId>
+			<version>1.0.3</version>
+			<scope>test</scope>
+		</dependency>
+	<dependency>
     <groupId>org.slf4j</groupId>
     <artifactId>slf4j-api</artifactId>
     <version>1.7.10</version>

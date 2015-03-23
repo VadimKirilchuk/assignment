@@ -13,13 +13,14 @@ import java.util.Scanner;
  * Created by Андрей on 20.02.2015.
  */
 public class Sender {
+    private static final Logger LOG = LoggerFactory.getLogger(Sender.class);
     private final Socket clientSocket;
     private final OutputStreamWriter writer;
     private final Scanner scanner;
-    private volatile boolean  isOpen = false;
     private final DisconnectDataListener listener;
+    private volatile boolean  isOpen = false;
     private Thread currentThread;
-    private static final Logger LOG = LoggerFactory.getLogger(Sender.class);
+
 
     public Sender(Socket clientSocket, DisconnectDataListener listener) throws IOException {
         LOG.trace("Configuration sender constructor ");

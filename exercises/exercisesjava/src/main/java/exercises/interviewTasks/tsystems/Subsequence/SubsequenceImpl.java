@@ -12,7 +12,7 @@ public class SubsequenceImpl implements Subsequence {
         List<Integer> firstList = new ArrayList<>();
         firstList.add(1);
         firstList.add(2);
-        firstList.add(3);
+        firstList.add(4);
         List<Integer> secondList = new ArrayList<>();
         secondList.add(55);
         secondList.add(1);
@@ -32,19 +32,18 @@ public class SubsequenceImpl implements Subsequence {
         // check if Lis x and List y are the same link
         if (x == y) {
             return true;
-        } else {
-            //if List x is null link or List y is null or size of y < size of x, then return false
-            if ((x == null || y == null) || (y.size() < x.size())) {
-                return false;
-            } else {
-                //if count of identical elements==size of x, then return true? otherwise return false
-                return x.size() == checkIdenticalElements(x, y);
-            }
         }
+        //if List x is null link or List y is null or size of y < size of x, then return false
+        if ((x == null || y == null) || (y.size() < x.size())) {
+            return false;
+        }
+        //if count of identical elements==size of x, then return true? otherwise return false
+        return checkElements(x, y);
     }
 
     @SuppressWarnings("rawtypes")
-    private int checkIdenticalElements(List x, List y) {
+    private boolean checkElements(List x, List y) {
+        /*
         int identicalElementsCount = 0;
         int xListSize = x.size();
         Iterator xListIterator = x.iterator();
@@ -73,5 +72,27 @@ public class SubsequenceImpl implements Subsequence {
             }
         }
         return identicalElementsCount;
+
+*/
+        Iterator xListIterator = x.iterator();
+        Iterator yListIterator = y.iterator();
+        int count = 0;
+        int xSize = x.size();
+        while (count != xSize && yListIterator.hasNext()) {
+            Object xEntity = xListIterator.next();
+            while (yListIterator.hasNext()) {
+                Object yEntity = yListIterator.next();
+                if (xEntity == yEntity) {
+                    count++;
+                    break;
+                } else {
+                    if (xEntity != null && xEntity.equals(yEntity)) {
+                        count++;
+                        break;
+                    }
+                }
+            }
+        }
+        return count == xSize;
     }
 }

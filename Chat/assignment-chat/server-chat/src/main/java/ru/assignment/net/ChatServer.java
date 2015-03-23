@@ -7,10 +7,12 @@ import ru.assignment.model.ChatModel;
 import java.util.Scanner;
 
 public class ChatServer {
-    private ServerRunnable serverRunnable;
+    private static final Logger LOG = LoggerFactory.getLogger(ChatServer.class);
     private final ChatModel chatModel;
     private final ServerConfiguration serverConfiguration;
-    private static final Logger LOG = LoggerFactory.getLogger(ChatServer.class);
+    private ServerRunnable serverRunnable;
+
+
 
     public static void main(String[] args) {
         LOG.info("Start Main Server");

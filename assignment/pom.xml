@@ -30,10 +30,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.carrotsearch.randomizedtesting</groupId>
-			<artifactId>randomizedtesting-runner</artifactId>
-			<version>2.1.11</version>
-		</dependency>
+            <groupId>com.carrotsearch.randomizedtesting</groupId>
+            <artifactId>randomizedtesting-runner</artifactId>
+            <version>2.1.12</version>
+        </dependency>
+		
 	</dependencies>
 	<build>
     <plugins>

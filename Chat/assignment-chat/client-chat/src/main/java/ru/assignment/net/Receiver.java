@@ -13,13 +13,14 @@ import java.nio.charset.StandardCharsets;
  * Created by Андрей on 20.02.2015.
  */
 public class Receiver implements Runnable {
+    private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
     private final Socket clientSocket;
     private final BufferedReader reader;
     private final InputStreamReader streamReader;
     private final DisconnectDataListener listener;
     private volatile boolean isOpen = false;
     private Thread currentThread;
-    private static final Logger LOG = LoggerFactory.getLogger(Receiver.class);
+
 
 
     public Receiver(Socket clientSocket, DisconnectDataListener listener) throws IOException {

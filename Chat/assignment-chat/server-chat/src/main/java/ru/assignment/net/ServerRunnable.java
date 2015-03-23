@@ -16,13 +16,14 @@ import java.util.Set;
  * Created by Андрей on 18.02.2015.
  */
 public class ServerRunnable implements Runnable {
+    private static final Logger LOG = LoggerFactory.getLogger(ServerRunnable.class);
     private final int port;
     private ChatModel chatModel;
     private ServerSocket serverSocket;
     private Set<Session> sessionSet;
     private int sessionCount;
     private boolean isClosed = false;
-    private static final Logger LOG = LoggerFactory.getLogger(ServerRunnable.class);
+
 
     public ServerRunnable(int port, ChatModel chatModel) {
         LOG.trace("Configuration ServerRunnable constructor, port= {}",port);

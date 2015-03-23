@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import ru.assignment.message.ChatMessage;
 import ru.assignment.net.Session;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,9 +17,10 @@ import java.util.Set;
  * Created by Андрей on 18.02.2015.
  */
 public class ChatModel {
+    private static final Logger LOG = LoggerFactory.getLogger(ChatModel.class);
     private final Set<ChatModelListener> listenerSet;
     private final List<ChatMessage> messageList;
-    private static final Logger LOG = LoggerFactory.getLogger(ChatModel.class);
+
 
     public ChatModel() {
         LOG.trace("Configuration ChatModel constructor");
@@ -27,7 +30,16 @@ public class ChatModel {
 
     public void addMessage(ChatMessage chatMessage,
                            ChatModelListener chatModelListener) {
-        LOG.trace("Add message to ChatModel");
+        LOG.trace("Add message to ChatModel {}",chatMessage.getMessage());
+        try{
+            BufferedWriter buf=new BufferedWriter(new FileWriter("e:\\fileggTestNow.txt",true));
+            buf.write(chatMessage.getMessage());
+            buf.newLine();
+            buf.flush();
+            buf.close();
+        }catch (IOException e){
+
+        }
         messageList.add(chatMessage);
         sendMessageToAllListeners(chatMessage, chatModelListener);
     }
