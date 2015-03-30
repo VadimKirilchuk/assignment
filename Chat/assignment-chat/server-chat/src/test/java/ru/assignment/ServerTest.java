@@ -71,8 +71,8 @@ public class ServerTest {
                     writer.flush();
                     ServerTest.this.messageCount++;
                     String messageFromServer;
-                    while (!(messageFromServer = reader.readLine()).equals("disconnect"))
-                        list.add(messageFromServer);
+                    while (!(messageFromServer = reader.readLine()).equals("disconnect")){
+                        list.add(messageFromServer);}
                 } catch (IOException e) {
                     fail(e.toString());
                 }

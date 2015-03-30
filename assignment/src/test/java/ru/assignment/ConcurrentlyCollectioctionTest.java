@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static junitparams.JUnitParamsRunner.$;
@@ -49,12 +50,16 @@ public class ConcurrentlyCollectioctionTest {
 
         for (Thread thread : threadList) {
             thread.start();
+
         }
         try {
-            Thread.sleep(5000);
+            for (Thread thread : threadList) {
+                thread.join();
+            }
         } catch (InterruptedException e) {
             fail(e.toString());
         }
+        assertTrue(list.size()==count);
         for (int i = 1; i <= count; i++) {
             assertTrue("actual int " + i + " list elem " + list.get(i - 1),
                       (list.get(i - 1)) == i);

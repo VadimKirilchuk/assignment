@@ -8,30 +8,48 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
+import java.util.Stack;
 
 /**
  * Created by Андрей on 07.02.2015.
  */
-public class BaseSocket {
+public class BaseSocket implements Runnable {
     private int f;
 
-    public static void main(String[] args) {
-
-        File file= new File("\\jjj.txt" +
-                "");
-      //  System.out.println(file.renameTo(new File("e:\\mvn\\td\\h.txt")));
-        System.out.println(file.getAbsolutePath());
-        System.out.println(file.exists());
-if(file instanceof File);
-
-
+    @Override
+    public synchronized void run(){
 
     }
 
-    public static void show() throws IOException {
-        try (FileInputStream str = new FileInputStream("e:\\hhhds")) {
+    public synchronized static void main (String [] args)
+    {
+        FF f=new FF();
+        JJ fd=new JJ();
+        fd.sh();
 
+    }
+
+
+   static class In<E>{
+       Object[] ar;
+     //  Object f=new String("r");
+
+        In(){
+            ar= new Object[3];
         }
+        public void set(E f){
+            ar[0]=f;
+        }
+       // public E get(){
+     //       return ar[0];
+    //    }
+
+    }
+
+
+
+    public static void show() throws IOException {
+
     }
 
     public BaseSocket() {
@@ -114,8 +132,21 @@ if(file instanceof File);
                 Thread thread = new Thread(clientThread);
                 thread.start();
                 count++;
+
             }
         }
     }
 }
 
+class FF{
+
+    public void sh() throws InterruptedException{
+        throw new InterruptedException();
+    }
+}
+class JJ extends FF{
+    @Override
+    public void sh(){
+
+    }
+}
