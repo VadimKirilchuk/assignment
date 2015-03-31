@@ -1,4 +1,4 @@
-package ru.assignment.collections;
+package ru.assignment;
 
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -22,6 +22,12 @@ public class BankAccountSynchronizedTest {
     List<Thread> threadList;
     List<BankAccountNewGeneration> bankAccountsList;
 
+    @Before
+    public void init() {
+        threadList = new ArrayList<>();
+        bankAccountsList = new ArrayList<>();
+    }
+
     private class BankAccount {
         private int balance;
 
@@ -42,11 +48,7 @@ public class BankAccountSynchronizedTest {
         }
     }
 
-    @Before
-    public void init() {
-        threadList = new ArrayList<>();
-        bankAccountsList = new ArrayList<>();
-    }
+
 
     @Test
     @Parameters
@@ -93,13 +95,14 @@ public class BankAccountSynchronizedTest {
         }
 
         public synchronized void withdraw(int amount) {
-            if (balance < 10)
+           while (balance < 10) {
                 try {
                     wait();
-                    balance -= amount;
                 } catch (InterruptedException e) {
                     fail(e.toString());
                 }
+            }
+            balance -= amount;
         }
 
         public int getBalance() {
@@ -108,15 +111,13 @@ public class BankAccountSynchronizedTest {
     }
 
     private class BankThread extends Thread {
-        int amount;
-
 
 
         public void run() {
-            ThreadLocalRandom generator=ThreadLocalRandom.current();
-            int accountFromIdentifier = generator.nextInt(0,bankAccountsList.size());
-            int accountToIdentifier = generator.nextInt(0,bankAccountsList.size());
-            int randomAmount=generator.nextInt();
+            ThreadLocalRandom generator = ThreadLocalRandom.current();
+            int accountFromIdentifier = generator.nextInt(0, bankAccountsList.size());
+            int accountToIdentifier = generator.nextInt(0, bankAccountsList.size());
+            int randomAmount = generator.nextInt(0, 11);
             BankAccountNewGeneration accountFrom = bankAccountsList.get(accountFromIdentifier);
             BankAccountNewGeneration accountTo = bankAccountsList.get(accountToIdentifier);
             accountFrom.withdraw(randomAmount);
@@ -126,7 +127,6 @@ public class BankAccountSynchronizedTest {
 
     @Test
     @Parameters
-
     public void checkListAccountAmount(int bankAccountCount, int threadCount, int balance) {
         for (int i = 0; i < bankAccountCount; i++) {
             bankAccountsList.add(new BankAccountNewGeneration(balance));
@@ -145,18 +145,17 @@ public class BankAccountSynchronizedTest {
                 fail(e.toString());
             }
         }
-        int sum=0;
-        for(BankAccountNewGeneration account:bankAccountsList){
-            sum+=account.getBalance();
-
+        int sum = 0;
+        for (BankAccountNewGeneration account : bankAccountsList) {
+            sum += account.getBalance();
         }
 
-        assertTrue((bankAccountCount*balance)==sum);
+        assertTrue(bankAccountCount * balance + " g " + sum, (bankAccountCount * balance) == sum);
     }
 
     private Object[] parametersForCheckListAccountAmount() {
         return $($(50, 5, 500),
                 $(100, 10, 1000),
-                $(1000, 50, 1500));
+                $(200, 20, 2000));
     }
 }

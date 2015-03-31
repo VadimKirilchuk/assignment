@@ -145,6 +145,7 @@ public class ServerTest {
             while (iterator.hasNext()) {
                 second = Integer.valueOf(iterator.next());
                 assertTrue("illegal order " + "first-" + first + " second-" + second, first < second);
+
             }
         }
     }
