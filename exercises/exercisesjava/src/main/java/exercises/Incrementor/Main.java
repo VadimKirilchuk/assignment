@@ -6,13 +6,24 @@ package exercises.Incrementor;
 public class Main {
 
     public static void main(String [] args) {
-        Incrementor incrementor=new Incrementor(5);
+        Incrementor incrementor=new Incrementor();
+        incrementor.init(3);
         new Thread(incrementor).start();
-        for (int i = 0; i < 21; i++) {
+        for (int i = 0; i < 400; i++) {
          Client client=   new Client(incrementor);
             new Thread(client).start();
 
 
+        }
+
+
+        try{
+            Thread.currentThread().sleep(10);
+
+            incrementor.terminate();
+
+        }catch (InterruptedException e){
+            e.printStackTrace();
         }
     }
 }

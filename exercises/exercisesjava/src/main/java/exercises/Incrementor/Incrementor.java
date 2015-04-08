@@ -1,20 +1,23 @@
 package exercises.Incrementor;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by Андрей on 06.04.2015.
  */
 public class Incrementor implements Runnable {
-    private LinkedList<Runnable> taskList;
+    private LinkedList<Task> taskList;
     private LinkedList<Worker> workerList;
     private volatile boolean stopped = false;
+    private Thread currentThread;
 
-    public Incrementor(int workerCount) {
+    public Incrementor() {
         taskList = new LinkedList<>();
         workerList = new LinkedList<>();
+    }
+
+    public void init(int workerCount) {
         for (int i = 0; i < workerCount; i++) {
             Worker worker = new Worker(this);
             workerList.add(worker);
@@ -25,47 +28,80 @@ public class Incrementor implements Runnable {
 
     @Override
     public void run() {
-        try {
-            while (!stopped) {
-                if (taskList.isEmpty()) {
-                    synchronized (taskList) {
+        currentThread = Thread.currentThread();
+
+        while (!stopped && !currentThread.isInterrupted()) {
+            Task task = null;
+            try {
+
+                synchronized (taskList) {
+                    while (taskList.isEmpty()) {
                         taskList.wait();
                     }
-                } else {
-                    if (workerList.isEmpty()) {
-                        synchronized (workerList) {
-                            workerList.wait();
-                        }
-                    }
+                    task = getTask();
                 }
-                Runnable task = getTask();
-                getWorker().setTask(task);
+
+                synchronized (workerList) {
+                    while (workerList.isEmpty()) {
+
+                        workerList.wait();
+                    }
+                    getWorker().setTask(task);
+                }
+            } catch (InterruptedException e) {
+                currentThread.interrupt();
+                if (task != null) {
+                    task.interrupt();
+                }
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
+
+;
+    }
+
+    public void removeTasks() {
+        int i = 0;
+
+        Iterator<Task> iterator = taskList.iterator();
+        while (iterator.hasNext()) {
+            Task task = iterator.next();
+            task.interrupt();
+            iterator.remove();
+        }
+
+
     }
 
     public void addWorker(Worker worker) {
+
         synchronized (workerList) {
-            workerList.addFirst(worker);
-            workerList.notify();
+            if (!stopped) {
+                workerList.addLast(worker);
+                workerList.notify();
+            }
         }
     }
 
     public Worker getWorker() {
+
         return workerList.removeLast();
     }
 
     public void addTask(Task task) {
+
         synchronized (taskList) {
-            taskList.add(task);
-            taskList.notify();
+            if (!stopped) {
+                taskList.add(task);
+                taskList.notify();
+            } else {
+                task.interrupt();
+            }
         }
     }
 
-    public Runnable getTask() {
-        return taskList.remove(0);
+    public Task getTask() {
+
+        return taskList.removeFirst();
     }
 
     public boolean isStopped() {
@@ -73,11 +109,27 @@ public class Incrementor implements Runnable {
     }
 
     public void terminate() {
-        stopped = true;
-        for(Worker worker:workerList){
-            synchronized (worker){
-                worker.notify();
+        synchronized (taskList) {
+
+            synchronized (workerList) {
+
+                removeTasks();
+                removeWorkers();
+                currentThread.interrupt();
+                stopped = true;
             }
+        }
+    }
+
+    public void removeWorkers() {
+
+        Iterator<Worker> iterator = workerList.iterator();
+        while (iterator.hasNext()) {
+            Worker worker = iterator.next();
+            synchronized (worker) {
+                worker.getThread().interrupt();
+            }
+            iterator.remove();
         }
     }
 }

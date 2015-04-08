@@ -11,6 +11,8 @@ import java.util.Scanner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by Андрей on 02.04.2015.
@@ -75,8 +77,13 @@ public class CallableExample {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+
             }
             return false;
         }
+    }
+    @Override
+    public void finalize() throws InterruptedException{
+
     }
 }

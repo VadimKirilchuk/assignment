@@ -10,11 +10,12 @@ public class Task implements Runnable {
 
     public Task(int value) {
         oldValue = value;
+        newValue=value;
     }
 
     @Override
     public synchronized void run() {
-        newValue = oldValue + 1;
+        newValue = newValue + 1;
         flag = true;
         notify();
     }
@@ -27,10 +28,15 @@ public class Task implements Runnable {
                 e.printStackTrace();
             }
         }
+
         return newValue;
     }
 
     public int getOldValue(){
         return oldValue;
+    }
+    public synchronized void interrupt(){
+        flag=true;
+        notify();
     }
 }

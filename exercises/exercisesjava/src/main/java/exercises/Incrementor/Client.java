@@ -1,5 +1,6 @@
 package exercises.Incrementor;
 
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -14,8 +15,8 @@ public class Client implements Runnable {
 
     @Override
     public void run() {
-        ThreadLocalRandom random = ThreadLocalRandom.current();
-        Task task = new Task(random.nextInt(1,51));
+     Random random =new Random();
+        Task task = new Task(random.nextInt(51));
         incrementor.addTask(task);
         System.out.println("old " + task.getOldValue() + " new " + task.getNewValue() );
     }
