@@ -22,9 +22,7 @@ public class Main {
 
             Thread.currentThread().sleep(50);
             incrementor.shutDown();
-            for (Client client : clientList) {
-                client.stop();
-            }
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

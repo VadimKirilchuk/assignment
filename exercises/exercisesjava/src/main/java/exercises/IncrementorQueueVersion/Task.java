@@ -6,11 +6,12 @@ package exercises.IncrementorQueueVersion;
 public class Task {
     private int oldValue;
     private int newValue;
-    private volatile boolean flag = false;
+    private volatile boolean ready = false;
+    private volatile boolean isInterrupred = false;
 
     public Task(int value) {
         oldValue = value;
-        newValue=value;
+        newValue = value;
     }
 
     public int getOldValue() {
@@ -19,22 +20,30 @@ public class Task {
 
     public synchronized int getNewValue() {
         try {
-            while (!flag) {
+            while (!ready) {
                 wait();
+            }
+            if (isInterrupred) {
+                throw new InterruptedException();
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
+
         return newValue;
     }
 
-    public synchronized void setNewValue() {
-        newValue = newValue+1;
-        flag=true;
+    public  void setNewValue(int value) {
+        newValue = value;
+    }
+
+    public void notifyTaskHolder() {
+        ready = true;
         notify();
     }
 
-    public void setFlag(){
-        flag=true;
+    public void interrupt() {
+        isInterrupred = false;
     }
 }

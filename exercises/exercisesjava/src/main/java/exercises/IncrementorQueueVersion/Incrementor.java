@@ -11,7 +11,7 @@ public class Incrementor {
     public static Incrementor incrementor = new Incrementor();
     Queue taskQueue;
     List<Thread> threadList;
-    public static volatile boolean stop = false;
+    // public static volatile boolean stop = false;
 
     private Incrementor() {
         taskQueue = new Queue();
@@ -28,28 +28,16 @@ public class Incrementor {
     }
 
     public void addTask(Task task) {
-        synchronized (taskQueue) {
-            if (!stop) {
-                taskQueue.addTask(task);
-            } else {
-                task.setFlag();
-            }
-        }
+        taskQueue.addTask(task);
     }
 
     public Task getTask() throws InterruptedException {
-        synchronized (taskQueue) {
-            return taskQueue.getTask();
-        }
+        return taskQueue.getTask();
     }
 
     public void shutDown() {
-        synchronized (taskQueue) {
-            stop = true;
-
-            taskQueue.cleanQueue();
-            cleanThreads();
-        }
+        taskQueue.cleanQueue();
+        cleanThreads();
     }
 
     public void cleanThreads() {

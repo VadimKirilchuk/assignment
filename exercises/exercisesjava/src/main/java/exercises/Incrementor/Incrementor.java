@@ -59,7 +59,7 @@ public class Incrementor implements Runnable {
 ;
     }
 
-    public void removeTasks() {
+    private void removeTasks() {
         int i = 0;
 
         Iterator<Task> iterator = taskList.iterator();
@@ -121,7 +121,7 @@ public class Incrementor implements Runnable {
         }
     }
 
-    public void removeWorkers() {
+    private void removeWorkers() {
 
         Iterator<Worker> iterator = workerList.iterator();
         while (iterator.hasNext()) {

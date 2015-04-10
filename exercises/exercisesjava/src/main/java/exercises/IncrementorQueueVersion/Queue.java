@@ -8,34 +8,36 @@ import java.util.LinkedList;
  */
 public class Queue {
     private LinkedList<Task> taskList;
+    private volatile boolean stop = false;
 
     public Queue() {
         taskList = new LinkedList<>();
     }
 
-    public Task getTask() throws InterruptedException {
-
+    public synchronized Task getTask() throws InterruptedException {
         while (taskList.isEmpty()) {
             wait();
         }
-
         return taskList.removeFirst();
     }
 
-    public void addTask(Task task) {
-        taskList.add(task);
-        notify();
+    public synchronized void addTask(Task task) {
+        if (!stop) {
+            taskList.add(task);
+            notify();
+        } else {
+            Thread.currentThread().interrupt();
+        }
     }
 
-
-    public void cleanQueue() {
-
+    public synchronized void cleanQueue() {
+        stop = true;
         Iterator<Task> iterator = taskList.iterator();
         while (iterator.hasNext()) {
             Task task = iterator.next();
             synchronized (task) {
-                task.setFlag();
-                task.notify();
+                task.notifyTaskHolder();
+                task.interrupt();
             }
             iterator.remove();
         }

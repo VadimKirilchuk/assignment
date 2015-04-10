@@ -4,10 +4,11 @@ package exercises;
  * Created by Андрей on 26.03.2015.
  */
 public class Fibonacci {
-    public static void main (String[] args){
+    public static void main (String[] args)throws InterruptedException{
         for(int i=1;i<=5;i++) {
             Thread thread=new Thread(new Fibo(12));
             thread.start();
+
         }
     }
 
@@ -15,7 +16,7 @@ public class Fibonacci {
 
 class Fibo implements Runnable{
     int count;
-    Fibo(int count ){
+    Fibo(int count )throws InterruptedException{
         this.count=count;
     }
     public void run(){
