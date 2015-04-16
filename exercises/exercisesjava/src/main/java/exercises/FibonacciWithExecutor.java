@@ -10,8 +10,9 @@ import java.util.concurrent.*;
  */
 public class FibonacciWithExecutor {
     public static void main(String[] args) {
-        ExecutorService executor = Executors.newFixedThreadPool(15);
-        Future<BigInteger> element = executor.submit(new FibonacciCalculatorWithMemorizing(8, executor));
+        ExecutorService executor = Executors.newFixedThreadPool(5);
+        long startTime = System.nanoTime();
+        Future<BigInteger> element = executor.submit(new FibonacciMultithreading(8, executor));
         try {
 
             System.out.println(element.get());
@@ -20,6 +21,8 @@ public class FibonacciWithExecutor {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+        long estimatedTime = System.nanoTime() - startTime;
+        System.out.println(estimatedTime);
     }
 
     private static class FibonacciCalculator implements Callable<Integer> {
@@ -78,14 +81,15 @@ public class FibonacciWithExecutor {
                 BigInteger result = prevElement.add(prevPrevElement);
                 numberList.add(number - 1, result);
                 return result;
-            }
-            BigInteger prevElement = numberList.get(number - 2);
-            BigInteger result = prevElement.add(prevPrevElement);
-            numberList.add(number - 1, result);
-            BigInteger nextElement = prevElement.add(result);
-            numberList.add(number, nextElement);
+            } else {
+                BigInteger prevElement = numberList.get(number - 2);
+                BigInteger result = prevElement.add(prevPrevElement);
+                numberList.add(number - 1, result);
+                BigInteger nextElement = prevElement.add(result);
+                numberList.add(number, nextElement);
 
-            return result;
+                return result;
+            }
         }
     }
 
@@ -108,7 +112,7 @@ public class FibonacciWithExecutor {
         @Override
         public BigInteger call() throws Exception {
             synchronized (numberList) {
-                if (number < numberList.size()) {
+                if (number <= numberList.size()) {
                     return numberList.get(number - 1);
                 }
             }

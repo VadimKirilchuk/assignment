@@ -6,8 +6,10 @@ package exercises;
 public class Fibonacci {
     public static void main (String[] args)throws InterruptedException{
         for(int i=1;i<=5;i++) {
+            Object obj;
             Thread thread=new Thread(new Fibo(12));
             thread.start();
+
 
         }
     }
