@@ -60,13 +60,12 @@ public class ChatClient implements DisconnectDataListener {
     }
 
     public void finishSession() throws IOException {
-
         clientSocket.close();
         LOG.trace("Finish  session");
     }
 
     @Override
-    public void finishDataOperation() {
+    public synchronized void finishDataOperation() {
         LOG.trace("Start disconectReceived");
         if (receiver.isOpen()) {
             receiver.disconnect();

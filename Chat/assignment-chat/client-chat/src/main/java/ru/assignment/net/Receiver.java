@@ -21,10 +21,8 @@ public class Receiver implements Runnable {
     private volatile boolean isOpen = false;
     private Thread currentThread;
 
-
-
     public Receiver(Socket clientSocket, DisconnectDataListener listener) throws IOException {
-    LOG.trace("Configuration receiver constructor");
+        LOG.trace("Configuration receiver constructor");
         this.listener = listener;
         this.clientSocket = clientSocket;
         streamReader = new InputStreamReader(clientSocket.getInputStream(), StandardCharsets.UTF_16);
@@ -54,10 +52,8 @@ public class Receiver implements Runnable {
         isOpen = true;
         LOG.trace("Start waiting messages from server, receiver isOpen= {}", isOpen);
         while (isOpen) {
-
             try {
                 if (!reader.ready()) {
-
                     try {
                         Thread.sleep(10);
                     } catch (InterruptedException e) {
@@ -69,7 +65,7 @@ public class Receiver implements Runnable {
                     String message = reader.readLine();
                     System.out.println(message);
                     LOG.info("Receiver get data from server: {}", message);
-                    if (message.equals("disconnect")) {
+                    if (message.equals("server disconnect")) {
                         isOpen = false;
                     }
                 }
@@ -81,9 +77,10 @@ public class Receiver implements Runnable {
         close();
         listener.finishDataOperation();
     }
-public boolean isOpen(){
-    return isOpen;
-}
+
+    public boolean isOpen() {
+        return isOpen;
+    }
 
     public void disconnect() {
         LOG.trace("Disconnect receiver");
@@ -97,7 +94,7 @@ public boolean isOpen(){
 
             reader.close();
         } catch (IOException e) {
-            LOG.error("Receiver reader close exception",e);
+            LOG.error("Receiver reader close exception", e);
         }
     }
 }

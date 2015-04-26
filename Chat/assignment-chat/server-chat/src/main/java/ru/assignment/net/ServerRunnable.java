@@ -22,7 +22,7 @@ public class ServerRunnable implements Runnable {
     private ServerSocket serverSocket;
     private Set<Session> sessionSet;
     private int sessionCount;
-    private boolean isClosed = false;
+    private volatile boolean isClosed = false;
 
 
     public ServerRunnable(int port, ChatModel chatModel) {
@@ -63,13 +63,13 @@ public class ServerRunnable implements Runnable {
     public void startNewSession(Socket socket,
                                 ChatModel chatModel) {
         LOG.trace("Start new Session number= {}", sessionCount);
-        Session session = new Session(socket, sessionCount, chatModel);
+        Session session = new Session(socket, sessionCount, chatModel,this);
         sessionSet.add(session);
         session.startAsync();
         sessionCount++;
     }
 
-    public void checkConnections() {
+    public synchronized void checkConnections() {
 
         LOG.trace("ServerRunnable check connection");
         if (!sessionSet.isEmpty()) {
@@ -79,15 +79,20 @@ public class ServerRunnable implements Runnable {
         }
     }
 
-    public void clearConnections() {
+    public  void clearConnections() {
         LOG.trace("Clear all connections");
         Iterator<Session> iterator = sessionSet.iterator();
-        System.out.println(sessionSet.size());
         while (iterator.hasNext()) {
             Session session = iterator.next();
-            iterator.remove();
+           // iterator.remove();
             session.shutDown();
         }
+    }
+
+    public synchronized void removeSession(Session session){
+        LOG.trace("Remove session from server");
+        System.out.println("remove from server");
+        sessionSet.remove(session);
     }
 
     public void close() {

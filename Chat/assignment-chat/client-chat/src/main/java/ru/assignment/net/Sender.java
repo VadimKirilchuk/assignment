@@ -3,6 +3,7 @@ package ru.assignment.net;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
@@ -36,7 +37,7 @@ public class Sender {
             LOG.info("Sender send message to server, message: {}", message);
             writer.write(message);
             writer.flush();
-            if (message.equalsIgnoreCase("close" + "\n")) {
+            if (message.equalsIgnoreCase("disconnect" + "\n")) {
                 isOpen = false;
             }
         } else {
@@ -57,7 +58,6 @@ public class Sender {
      *  After all closing manipulations we should go back and check that receiver and sender were closed.
      */
     public void connect() {
-
         isOpen = true;
         LOG.debug("Sender waiting message from user, sender isOpen= {}", isOpen);
         while (isOpen) {

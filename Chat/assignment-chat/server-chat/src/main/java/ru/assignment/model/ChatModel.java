@@ -28,34 +28,26 @@ public class ChatModel {
         messageList = new ArrayList<ChatMessage>();
     }
 
-    public void addMessage(ChatMessage chatMessage,
+    public synchronized void addMessage(ChatMessage chatMessage,
                            ChatModelListener chatModelListener) {
         LOG.trace("Add message to ChatModel {}",chatMessage.getMessage());
-        try{
-            BufferedWriter buf=new BufferedWriter(new FileWriter("e:\\fileggTestNow.txt",true));
-            buf.write(chatMessage.getMessage());
-            buf.newLine();
-            buf.flush();
-            buf.close();
-        }catch (IOException e){
 
-        }
         messageList.add(chatMessage);
         sendMessageToAllListeners(chatMessage, chatModelListener);
     }
 
-    public void addListener(ChatModelListener listener) {
+    public synchronized void addListener(ChatModelListener listener) {
         LOG.trace("Add listener to ChatModel");
         listenerSet.add(listener);
 
     }
 
-    public void removeListener(Session listener) {
+    public synchronized void removeListener(Session listener) {
         LOG.trace("Remove listener from ChatModel");
         listenerSet.remove(listener);
     }
 
-    public List<ChatMessage> getLastMessages() {
+    public synchronized List<ChatMessage> getLastMessages() {
         LOG.trace("Receive message from ChatModel");
         int size = messageList.size();
         int startIndex = (Math.min(size, 30) == 30 ? (size - 30) : 0);
