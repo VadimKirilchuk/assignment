@@ -13,7 +13,7 @@ public class SquareMatrixMultipleRecursive {
 
     public static void main(String[] args) {
 
-        int n = 64;
+        int n = 128;
         int matrix[][] = new int[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -77,7 +77,7 @@ System.out.println(Arrays.deepToString(matrix));
                     CMatrix[CYCoordinate][CXCoordinate] = CMatrix[CYCoordinate][CXCoordinate]
                             + (AMatrix[AYCoordinate][AXCoordinate] * BMatrix[AXCoordinate][CXCoordinate]);
                 }
-                /*
+
                 try {
                     barrier.await();
                 } catch (InterruptedException e) {
@@ -85,7 +85,7 @@ System.out.println(Arrays.deepToString(matrix));
                 } catch (BrokenBarrierException e) {
                     e.printStackTrace();
                 }
-                */
+
             } else {
 
                 for (int i = CYCoordinate; i < (CYCoordinate + countOfActiveElements); i += n) {
@@ -99,6 +99,11 @@ System.out.println(Arrays.deepToString(matrix));
                 }
             }
         }
+
+
+
+
+
     }
 }
 
