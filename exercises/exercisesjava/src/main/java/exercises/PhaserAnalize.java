@@ -35,7 +35,7 @@ public class PhaserAnalize {
                 }
 
                 System.out.println(" first");
-       
+
             }
         }
     }
