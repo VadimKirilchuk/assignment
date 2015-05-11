@@ -19,9 +19,14 @@ public class CalculatorImpl implements Calculator {
     }
 
     private enum Operator {
-        UNARYMINUS('#', false, 3), MULTIPLY('*', true, 2), DIVIDE('/', true, 2),
-        ADD('+', true, 1), SUBTRACT('-', true, 1), LEFT_PARENTHESISE('(', true, 0),
+        UNARYMINUS('#', false, 3),
+        MULTIPLY('*', true, 2),
+        DIVIDE('/', true, 2),
+        ADD('+', true, 1),
+        SUBTRACT('-', true, 1),
+        LEFT_PARENTHESISE('(', true, 0),
         RIGHT_PARENTHESISE(')', true, 0);
+
         public static Map<Character, Operator> operatorMap = new HashMap<Character, Operator>();
         private final char operatorSymbol;
         private final int precedence;
