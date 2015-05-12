@@ -122,7 +122,7 @@ public class CalculatorImpl implements Calculator {
     }
 
     private void processResultExpression(Deque<Double> operandStack,
-                                         Deque<Operator> operatorStack) {
+                                             Deque<Operator> operatorStack) {
         while (!operatorStack.isEmpty() && operatorStack.peekLast() != Operator.LEFT_PARENTHESISE) {
             execute(operatorStack, operandStack);
         }
