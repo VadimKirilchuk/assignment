@@ -5,7 +5,8 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
+ * Class provides methods for checking ability
+ * to get one sequence from another sequence.
  */
 public class SubsequenceImpl implements Subsequence {
     public static void main(String[] args) {
@@ -27,6 +28,14 @@ public class SubsequenceImpl implements Subsequence {
 
     }
 
+    /**
+     * Checks if it is possible to get a sequence which is equal to the first
+     * one by removing some elements from the second one.
+     *
+     * @param x first sequence
+     * @param y second sequence
+     * @return {@code true} if possible, otherwise {@code false}
+     */
     @Override
     public boolean find(List x, List y) {
         // check if Lis x and List y are the same link
@@ -41,6 +50,14 @@ public class SubsequenceImpl implements Subsequence {
         return checkElements(x, y);
     }
 
+    /**
+     *  Compare two list. If it is possible to get all elements stored
+     *  at first list from second list in right order, then
+     *  return {@code true}, otherwise return {@code false}.
+     * @param x x first list
+     * @param y y second list
+     * @return {@code true} if possible, otherwise {@code false}
+     */
     @SuppressWarnings("rawtypes")
     private boolean checkElements(List x, List y) {
         /*
