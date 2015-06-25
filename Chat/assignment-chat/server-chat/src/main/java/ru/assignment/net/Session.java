@@ -1,121 +1,161 @@
 package ru.assignment.net;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.assignment.message.ChatMessage;
 import ru.assignment.model.ChatModel;
 import ru.assignment.model.ChatModelListener;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
-import java.util.Scanner;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class Session implements Runnable, ChatModelListener {
-    private Socket socket;
+    private static final Logger LOG = LoggerFactory.getLogger(Session.class);
+    private final Socket socket;
     private final int sessionIdentifier;
-    private ChatModel chatModel;
-    private Scanner scanner;
-    private PrintWriter writer;
+    private final ChatModel chatModel;
+    private ServerRunnable server;
+    private BufferedReader reader;
+    private InputStreamReader streamReader;
+    private OutputStreamWriter writer;
+
+    private Thread currentThread;
+    private volatile boolean isActive = false;
 
     public Session(Socket socket, int sessionIdentifier,
-                   ChatModel chatModel) throws IOException {
+                   ChatModel chatModel, ServerRunnable server) {
+        LOG.trace("Configuration Server constructor");
+        this.server=server;
         this.socket = socket;
         this.sessionIdentifier = sessionIdentifier;
         this.chatModel = chatModel;
-        initConfiguration();
+    }
+
+    public void startAsync() {
+        LOG.trace("Session start async");
+        Thread sessionThread = new Thread(this);
+        sessionThread.start();
     }
 
     public void run() {
-        System.out.println("Session startSession");
-        listen();
-        closeSession();
+        LOG.info("Run session {}", sessionIdentifier);
+        try {
+            init();
+            listen();
+            closeSession();
+        } catch (IOException e) {
+            LOG.error("Session run exception", e);
+        }
     }
 
-    public void initConfiguration() throws IOException {
+    public void init() throws IOException {
         try {
-            scanner = new Scanner(socket.getInputStream());
-            writer = new PrintWriter(socket.getOutputStream());
+            LOG.trace("Session init");
+            currentThread = Thread.currentThread();
+            streamReader = new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_16);
+            reader = new BufferedReader(streamReader);
+            writer = new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_16);
         } catch (IOException e) {
+            reader.close();
+            writer.close();
             closeSocket();
             throw e;
         }
         chatModel.addListener(this);
     }
 
+    public void shutDown() {
+        LOG.trace("Shutdown session");
+        currentThread.interrupt();
+        isActive = false;
+    }
+
     public void closeSession() {
-
-        System.out.println("closeSession from Session");
-
-        chatModel.removeListener(sessionIdentifier);
-        scanner.close();
-        writer.close();
+        LOG.trace("Close session {}", sessionIdentifier);
+        chatModel.removeListener(this);
+        server.removeSession(this);
+        onMessageToChatModel("disconnect " + sessionIdentifier);
+        onNewMessage(new ChatMessage("server disconnect"));
+        closeStreams();
         closeSocket();
+    }
+
+    public void closeStreams() {
+        try {
+            LOG.trace("Close streams");
+            reader.close();
+            writer.close();
+        } catch (IOException e) {
+            LOG.error("Close streams exception", e);
+        }
     }
 
     public void closeSocket() {
         try {
-
-            System.out.println("close socket");
-
+            LOG.trace("Close socket");
             socket.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Close socket exception", e);
         }
     }
 
-    public void sendMessageToChatModel(String message) {
-        System.out.println("Session send message to chat model ");
+    public void onMessageToChatModel(String message) {
+        LOG.info("Sent message to ChatModel, message= {}", message);
         ChatMessage chatMessage = new ChatMessage(message);
         chatModel.addMessage(chatMessage, this);
     }
 
-
-
-    // public void setListenerForChatModel(OutputStream outputStream){
+    public void getLastMessages() {
+        LOG.trace("Get last messages from ChatModel");
+        List<ChatMessage> messageList = chatModel.getLastMessages();
+        for (ChatMessage message : messageList) {
+            onNewMessage(message);
+        }
+    }
 
     public void listen() {
+
+        LOG.debug("Session listen start");
         getLastMessages();
-        System.out.println("startListenSession wait message");
-      /*
-        byte[] byt=new byte[16];
-        try {
-            while (socket.getInputStream().read(byt)!=-1) {
-
+        isActive = true;
+        while (isActive) {
+            try {
+                if (!reader.ready()) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                } else {
+                    String message = reader.readLine();
+                    LOG.info("Get message from client", message);
+                    if (message.equalsIgnoreCase("disconnect")) {
+                        isActive = false;
+                    } else {
+                        onMessageToChatModel(message);
+                    }
+                }
+            } catch (IOException e) {
+                LOG.info("Session listen exception", e);
+                isActive = false;
             }
-        }catch(IOException e){
-
-        }
-        System.out.println("message: "+new String(byt));
-        */
-        //System.out.println(scanner.nextLine());
-        while (scanner.hasNextLine()) {
-            String message = scanner.nextLine();
-            System.out.println("ListenSession get message -" + message);
-            if (message.equalsIgnoreCase("disconnect")) {
-                break;
-            }
-            System.out.println("beforesendMessageToChatModel");
-            sendMessageToChatModel(message);
         }
     }
 
-    public void getLastMessages() {
-        chatModel.sendAllMessagesToNewListener(this);
-    }
-
-    public void sendMessageToClient(ChatMessage chatMessage) {
+    public void onNewMessage(ChatMessage chatMessage) {
         String message = chatMessage.getMessage() + "\n";
-        System.out.println("Session send message to client from chat model");
-        //System.out.println(message);
-        //System.out.println(writer);
-        writer.write(message);
-        writer.flush();
-        /*
+        LOG.info("Send message from server to client, message= {}", message);
         try {
-            OutputStream out = socket.getOutputStream();
-            out.write(message.getBytes());
-            out.flush();
+            writer.write(message);
+            writer.flush();
         } catch (IOException e) {
+            LOG.error("Server-Client exception", e);
         }
-        */
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static junitparams.JUnitParamsRunner.$;
@@ -15,6 +16,7 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(JUnitParamsRunner.class)
 public class AppTest  {
+
     TestClass tclass;
     HashMap<String,String> map;
     @Before
