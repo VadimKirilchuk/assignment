@@ -2,73 +2,66 @@ package ru.games;
 
 import ru.games.pieces.*;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
 
 /**
  * Created by Андрей on 20.06.2015.
  */
 public class Game {
-    private final GameState gameState;
+    private State gameState;
     private final Piece[][] board;
     private final Controller controller;
     private Scanner scanner;
-    private Map<Piece,Coordinate> whitePiecesMap;
-    private Map<Piece,Coordinate> blackPiecesMap;
-    private Piece whiteKing;
-    private Piece blackKing;
+    private Map<PieceColor, Map<Piece, Coordinate>> pieceMap;
+    private Map<PieceColor, King> kingMap;
 
     public Game() {
-        gameState = new GameState();
+        //поле для стэйт вместо объекта state
+        gameState = State.WHITE_MOVING;
         board = new Piece[8][8];
-        controller = new Controller(board, whitePiecesMap, whiteKing,
-                blackPiecesMap, blackKing, gameState);
+        pieceMap = new HashMap<>();
+        kingMap = new HashMap<>();
         scanner = new Scanner(System.in);
+        controller = new Controller(board, pieceMap, kingMap);
     }
 
     private void init() {
-        setWhitePieces();
-        setBlackPieces();
+        fillPieceMap();
+        fillBoard();
     }
 
-    private void setWhitePieces() {
-        board[0][0] = new Rook(PieceColor.WHITE, PieceType.ROOK);
-        board[0][1] = new Knight(PieceColor.WHITE, PieceType.KNIGHT);
-        board[0][2] = new Bishop(PieceColor.WHITE, PieceType.BISHOP);
-        board[0][3] = new Queen(PieceColor.WHITE, PieceType.QUEEN);
-        board[0][4] = new King(PieceColor.WHITE, PieceType.KING);
-        board[0][5] = new Bishop(PieceColor.WHITE, PieceType.BISHOP);
-        board[0][6] = new Knight(PieceColor.WHITE, PieceType.KNIGHT);
-        board[0][7] = new Rook(PieceColor.WHITE, PieceType.ROOK);
-        for (int columnIndex = 0; columnIndex < 8; columnIndex++) {
-            whitePiecesMap.put(board[0][columnIndex], new Coordinate(0, columnIndex));
-        }
-        for (int columnIndex = 0; columnIndex < 8; columnIndex++) {
-            board[1][columnIndex] = new Pawn(PieceColor.WHITE, PieceType.PAWN);
-            whitePiecesMap.put(board[1][columnIndex], new Coordinate(1, columnIndex));
-        }
-        whiteKing = board[0][4];
-
+    private void fillPieceMap() {
+        pieceMap.put(PieceColor.WHITE, new HashMap<Piece, Coordinate>());
+        pieceMap.put(PieceColor.BLACK, new HashMap<Piece, Coordinate>());
     }
 
-    private void setBlackPieces() {
-        board[7][0] = new Rook(PieceColor.BLACK, PieceType.ROOK);
-        board[7][1] = new Knight(PieceColor.BLACK, PieceType.KNIGHT);
-        board[7][2] = new Bishop(PieceColor.BLACK, PieceType.BISHOP);
-        board[7][3] = new Queen(PieceColor.BLACK, PieceType.QUEEN);
-        board[7][4] = new King(PieceColor.BLACK, PieceType.KING);
-        board[7][5] = new Bishop(PieceColor.BLACK, PieceType.BISHOP);
-        board[7][6] = new Knight(PieceColor.BLACK, PieceType.KNIGHT);
-        board[7][7] = new Rook(PieceColor.BLACK, PieceType.ROOK);
+    private void fillBoard() {
+        setPieces(0, PieceColor.WHITE);
+        setPieces(7, PieceColor.BLACK);
+    }
+
+    private void setPieces(int line, PieceColor pieceColor) {
+        board[line][0] = new Rook(pieceColor, PieceType.ROOK);
+        board[line][1] = new Knight(pieceColor, PieceType.KNIGHT);
+        board[line][2] = new Bishop(pieceColor, PieceType.BISHOP);
+        board[line][3] = new Queen(pieceColor, PieceType.QUEEN);
+        board[line][4] = new King(pieceColor, PieceType.KING);
+        board[line][5] = new Bishop(pieceColor, PieceType.BISHOP);
+        board[line][6] = new Knight(pieceColor, PieceType.KNIGHT);
+        board[line][7] = new Rook(pieceColor, PieceType.ROOK);
+
+        Map<Piece, Coordinate> map = pieceMap.get(pieceColor);
         for (int columnIndex = 0; columnIndex < 8; columnIndex++) {
-            blackPiecesMap.put(board[7][columnIndex], new Coordinate(7,columnIndex));
+            map.put(board[line][columnIndex], new Coordinate(line, columnIndex));
         }
+        int index = Math.abs(line - 1);
         for (int columnIndex = 0; columnIndex < 8; columnIndex++) {
-            board[6][columnIndex] = new Pawn(PieceColor.BLACK, PieceType.PAWN);
-            blackPiecesMap.put(board[6][columnIndex], new Coordinate(6,columnIndex));
+            board[index][columnIndex] = new Pawn(pieceColor, PieceType.PAWN);
+            map.put(board[index][columnIndex], new Coordinate(index, columnIndex));
         }
-        blackKing = board[7][4];
+        kingMap.put(pieceColor, (King) board[line][4]);
     }
 
     public void play() {
@@ -78,23 +71,34 @@ public class Game {
 
     public void launch() {
         try {
-            //подходит?
-            while (gameState.getState() != State.END_OF_GAME) {
+          
+            while (gameState != State.END_OF_GAME) {
                 System.out.println("Enter your move:");
                 String stringCoordinates = getStringCoordinates();
-                Move pieceMove = MoveNotationAnalyzer.getMove(stringCoordinates, board);
-
-                switch (gameState.getState()) {
-                    case WHITE_MOVING:
-                        controller.processWhitePiece(pieceMove);
-                        break;
-                    case BLACK_MOVING:
-                        controller.processBlackPiece(pieceMove);
-                        break;
+                NotationAnalyzer analyzer = new NotationAnalyzer();
+                Move pieceMove = analyzer.getMove(stringCoordinates, board);
+                controller.processMove(pieceMove, gameState);
+                //насколько эта конструкция нормально выглядит?
+                if (controller.finishProcessing()) {
+                    gameState = State.END_OF_GAME;
+                } else {
+                    setNextState();
                 }
             }
-        } catch (Exception e) {
+        } catch (
+                Exception e
+                )
+
+        {
             e.printStackTrace();
+        }
+    }
+
+    public void setNextState() {
+        if (gameState == State.WHITE_MOVING) {
+            gameState = State.BLACK_MOVING;
+        } else {
+            gameState = State.WHITE_MOVING;
         }
     }
 

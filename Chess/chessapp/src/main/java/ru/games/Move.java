@@ -6,7 +6,7 @@ package ru.games;
 public class Move {
     private Coordinate pieceCoordinate;
     private Coordinate targetCoordinate;
-    private String rotate;
+    private Castling castlingType;
 
     public Move(Coordinate pieceCoordinate,
                 Coordinate targetCoordinate) {
@@ -16,17 +16,17 @@ public class Move {
     }
 
     public Move(Coordinate pieceCoordinate,
-                String rotate) {
+                Castling castlingType) {
         this.pieceCoordinate = pieceCoordinate;
-        this.rotate = rotate;
+        this.castlingType = castlingType;
     }
 
     public boolean isRotateMove() {
-        return rotate == null;
+        return castlingType == null;
     }
 
-    public String getRotate() {
-        return rotate;
+    public Castling getRotate() {
+        return castlingType;
     }
 
     public Coordinate getTargetCoordinate() {

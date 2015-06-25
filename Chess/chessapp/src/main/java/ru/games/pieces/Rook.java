@@ -1,39 +1,35 @@
 package ru.games.pieces;
 
-import ru.games.Coordinate;
-
 /**
  * Created by Андрей on 20.06.2015.
  */
-public class Rook extends Piece {
+public class Rook extends Piece implements CastlingMember {
+    private boolean castling = true;
+
     public Rook(PieceColor color, PieceType type) {
         super(color, type);
     }
+//упростить
 
     @Override
-    public boolean isValidMoveTo(Coordinate pieceCoordinate,
-                                 Coordinate targetCoordinate, Piece[][] board) {
-        int pieceCoordinateY = pieceCoordinate.getCoordinateY();
-        int pieceCoordinateX = pieceCoordinate.getCoordinateX();
-        int targetCoordinateY = targetCoordinate.getCoordinateY();
-        int targetCoordinateX = targetCoordinate.getCoordinateX();
-        //проверить корректность условия
-        if ((pieceCoordinateX != targetCoordinateX)
-                && (pieceCoordinateY != targetCoordinateY)) {
-            return false;
-        }
-        if ((pieceCoordinateX == targetCoordinateX)
-                && (pieceCoordinateY == targetCoordinateY)) {
-            return false;
-        }
+    protected boolean isPieceOnTrajectory(int pieceCoordinateY, int pieceCoordinateX,
+                                          int targetCoordinateY, int targetCoordinateX) {
+
+        return !((pieceCoordinateX != targetCoordinateX)
+                && (pieceCoordinateY != targetCoordinateY));
+    }
+
+    @Override
+    protected boolean checkPosition(int pieceCoordinateY, int pieceCoordinateX,
+                                    int targetCoordinateY, int targetCoordinateX,
+                                    Piece[][] board) {
 
         if (pieceCoordinateX == targetCoordinateX) {
             return checkPositionsX(pieceCoordinateY, pieceCoordinateX,
                     targetCoordinateY, board);
-        } else {
-            return checkPositionsY(pieceCoordinateY, pieceCoordinateX,
-                    targetCoordinateX, board);
         }
+        return checkPositionsY(pieceCoordinateY, pieceCoordinateX,
+                targetCoordinateX, board);
     }
 
     private boolean checkPositionsX(int pieceCoordinateY, int pieceCoordinateX,
@@ -46,13 +42,7 @@ public class Rook extends Piece {
             }
             index += amount;
         }
-        //можно ли так перенести?
-        if ((board[index][pieceCoordinateX] != null)
-                && (board[index][pieceCoordinateX].color
-                == board[pieceCoordinateY][pieceCoordinateX].color)) {
-            return false;
-        }
-        return true;
+        return isValidTargetPosition(board[index][pieceCoordinateX]);
     }
 
     private boolean checkPositionsY(int pieceCoordinateY, int pieceCoordinateX,
@@ -65,12 +55,14 @@ public class Rook extends Piece {
             }
             index += amount;
         }
-        //можно ли так перенести
-        if ((board[pieceCoordinateY][index] != null)
-                && (board[pieceCoordinateY][index].color
-                == board[pieceCoordinateY][pieceCoordinateX].color)) {
-            return false;
-        }
-        return true;
+        return isValidTargetPosition(board[pieceCoordinateY][index]);
+    }
+
+    public boolean getCastling() {
+        return castling;
+    }
+
+    public void setCastling(boolean castling) {
+        this.castling = castling;
     }
 }
